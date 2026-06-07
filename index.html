@@ -688,8 +688,6 @@
       <div class="field">
         <label>Jumlah Halaman <span class="req">*</span></label>
         <select id="halaman">
-           <option value="1">1 Halaman</option>
-          <option value="2">2 Halaman</option>
           <option value="3"  selected>3 Halaman</option>
           <option value="4">4 Halaman</option>
           <option value="5">5 Halaman</option>
@@ -1258,7 +1256,7 @@ function renderOutput(judul, totalPages) {
 
     const btnCopy = document.createElement('button');
     btnCopy.className = 'btn-copy';
-    btnCopy.innerHTML = '📋 Copy';
+    btnCopy.innerHTML = '📋 Copy & Paste Di ChatGPT';
     btnCopy.addEventListener('click', function() {
       const promptText = generatedPrompts[idx].prompt;
       if (navigator.clipboard && navigator.clipboard.writeText) {
