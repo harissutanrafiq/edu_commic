@@ -1,0 +1,1385 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Generator Prompt Komik Edukasi</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@400;600;700;800;900&family=Comic+Neue:wght@400;700&display=swap');
+
+  :root {
+    --ink: #1a0a2e;
+    --paper: #fffdf5;
+    --panel-bg: #ffffff;
+    --yellow: #ffd63a;
+    --orange: #ff6b35;
+    --blue: #2d6be4;
+    --teal: #00c9a7;
+    --pink: #ff4d8d;
+    --purple: #7c3aed;
+    --red: #e53e3e;
+    --green: #38a169;
+    --border: 3px solid var(--ink);
+    --shadow: 5px 5px 0 var(--ink);
+    --shadow-lg: 8px 8px 0 var(--ink);
+    --radius: 12px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body { overflow-x: hidden; }
+
+  img, select, input, textarea, button { max-width: 100%; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--paper);
+    background-image:
+      radial-gradient(circle at 20% 20%, rgba(255,214,58,0.15) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(45,107,228,0.12) 0%, transparent 50%),
+      url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%231a0a2e' fill-opacity='0.03'%3E%3Ccircle cx='20' cy='20' r='2'/%3E%3C/g%3E%3C/svg%3E");
+    min-height: 100vh;
+    color: var(--ink);
+  }
+
+  /* HEADER */
+  header {
+    background: var(--ink);
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 6px;
+    background: repeating-linear-gradient(90deg, var(--yellow) 0 40px, var(--orange) 40px 80px, var(--blue) 80px 120px, var(--teal) 120px 160px, var(--pink) 160px 200px);
+  }
+  .header-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 28px 24px 34px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    box-sizing: border-box;
+    width: 100%;
+  }
+  .header-icon {
+    width: 72px; height: 72px;
+    background: var(--yellow);
+    border: 3px solid var(--paper);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px;
+    flex-shrink: 0;
+    box-shadow: 4px 4px 0 rgba(255,255,255,0.3);
+  }
+  .header-text h1 {
+    font-family: 'Bangers', cursive;
+    font-size: 2.4rem;
+    color: var(--yellow);
+    letter-spacing: 2px;
+    line-height: 1;
+    text-shadow: 3px 3px 0 rgba(0,0,0,0.4);
+  }
+  .header-text p {
+    color: rgba(255,255,255,0.75);
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-top: 6px;
+    letter-spacing: 0.5px;
+  }
+
+  /* MAIN */
+  main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 32px 20px 60px;
+  }
+
+  /* CARD */
+  .card {
+    background: var(--panel-bg);
+    border: var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    padding: 28px;
+    margin-bottom: 28px;
+    position: relative;
+  }
+  .card-title {
+    font-family: 'Bangers', cursive;
+    font-size: 1.3rem;
+    letter-spacing: 1.5px;
+    color: var(--ink);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .card-title span.badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 2px solid var(--ink);
+    font-size: 0.9rem;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    flex-shrink: 0;
+  }
+
+  /* FORM GRID */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .form-grid .span2 { grid-column: 1 / -1; }
+
+  .field label {
+    display: block;
+    font-weight: 800;
+    font-size: 0.8rem;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin-bottom: 7px;
+    color: var(--ink);
+  }
+  .field label .req { color: var(--red); margin-left: 2px; }
+
+  .field input,
+  .field select,
+  .field textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 2.5px solid var(--ink);
+    border-radius: 8px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    background: #fffdf5;
+    color: var(--ink);
+    transition: border-color 0.15s, box-shadow 0.15s;
+    outline: none;
+    appearance: none;
+  }
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus {
+    border-color: var(--blue);
+    box-shadow: 3px 3px 0 var(--blue);
+  }
+  .field select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%231a0a2e' stroke-width='3'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 36px;
+    cursor: pointer;
+  }
+  .field textarea { resize: vertical; min-height: 90px; }
+
+  /* CHARACTER SECTION */
+  .char-toggle {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .char-btn {
+    flex: 1;
+    padding: 10px;
+    border: 2.5px solid var(--ink);
+    border-radius: 8px;
+    background: var(--paper);
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+  }
+  .char-btn.active {
+    background: var(--ink);
+    color: var(--yellow);
+  }
+  .char-info {
+    background: #f0f4ff;
+    border: 2px dashed var(--blue);
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: #334;
+  }
+  .char-info strong { color: var(--blue); }
+  #customCharArea { display: none; }
+
+  /* GENERATE BUTTON */
+  .btn-generate {
+    width: 100%;
+    padding: 16px;
+    background: var(--orange);
+    color: var(--paper);
+    border: 3px solid var(--ink);
+    border-radius: 10px;
+    font-family: 'Bangers', cursive;
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+    transition: transform 0.1s, box-shadow 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+  .btn-generate:hover { transform: translate(-2px,-2px); box-shadow: 7px 7px 0 var(--ink); }
+  .btn-generate:active { transform: translate(3px,3px); box-shadow: 2px 2px 0 var(--ink); }
+
+  /* OUTPUT SECTION */
+  #outputSection { display: none; }
+
+  .output-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .output-title {
+    font-family: 'Bangers', cursive;
+    font-size: 1.5rem;
+    letter-spacing: 1.5px;
+  }
+
+  .btn-dl-all {
+    padding: 10px 20px;
+    background: var(--teal);
+    color: var(--ink);
+    border: 2.5px solid var(--ink);
+    border-radius: 8px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 0.85rem;
+    cursor: pointer;
+    box-shadow: 3px 3px 0 var(--ink);
+    transition: transform 0.1s, box-shadow 0.1s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-dl-all:hover { transform: translate(-1px,-1px); box-shadow: 5px 5px 0 var(--ink); }
+  .btn-dl-all:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 var(--ink); }
+
+  /* PAGE CARDS */
+  .pages-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 18px;
+  }
+
+  .page-card {
+    background: var(--panel-bg);
+    border: 2.5px solid var(--ink);
+    border-radius: 10px;
+    box-shadow: 4px 4px 0 var(--ink);
+    overflow: hidden;
+    transition: transform 0.12s, box-shadow 0.12s;
+  }
+  .page-card:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--ink); }
+
+  .page-card-header {
+    padding: 12px 14px 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 2px solid var(--ink);
+  }
+  .page-num-badge {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: 2px solid var(--ink);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Bangers', cursive;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+  .page-card-title {
+    font-weight: 800;
+    font-size: 0.9rem;
+    line-height: 1.3;
+  }
+  .page-card-sub {
+    font-size: 0.75rem;
+    color: #666;
+    font-weight: 600;
+    margin-top: 2px;
+  }
+
+  .page-card-body {
+    padding: 12px 14px;
+  }
+  .page-preview {
+    font-size: 0.75rem;
+    line-height: 1.55;
+    color: #445;
+    height: 80px;
+    overflow: hidden;
+    position: relative;
+  }
+  .page-preview::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 28px;
+    background: linear-gradient(transparent, white);
+  }
+
+  .page-card-footer {
+    padding: 10px 14px;
+    border-top: 2px solid var(--ink);
+    display: flex;
+    gap: 8px;
+  }
+  .btn-copy, .btn-dl {
+    flex: 1;
+    padding: 7px 10px;
+    border: 2px solid var(--ink);
+    border-radius: 6px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: all 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+  .btn-copy { background: var(--yellow); }
+  .btn-dl { background: var(--blue); color: white; }
+  .btn-copy:hover, .btn-dl:hover { transform: translate(-1px,-1px); }
+  .btn-copy:active, .btn-dl:active { transform: translate(1px,1px); }
+
+  /* PAGE COLORS */
+  .pc-0 { background: #fff9e6; }
+  .pc-0 .page-card-header { background: var(--yellow); }
+  .pc-0 .page-num-badge { background: var(--ink); color: var(--yellow); }
+  .pc-1 { background: #fff0f5; }
+  .pc-1 .page-card-header { background: var(--pink); color: white; }
+  .pc-1 .page-num-badge { background: white; color: var(--pink); }
+  .pc-2 { background: #f0f7ff; }
+  .pc-2 .page-card-header { background: var(--blue); color: white; }
+  .pc-2 .page-num-badge { background: white; color: var(--blue); }
+  .pc-3 { background: #f0fff8; }
+  .pc-3 .page-card-header { background: var(--teal); color: var(--ink); }
+  .pc-3 .page-num-badge { background: var(--ink); color: var(--teal); }
+  .pc-4 { background: #f5f0ff; }
+  .pc-4 .page-card-header { background: var(--purple); color: white; }
+  .pc-4 .page-num-badge { background: white; color: var(--purple); }
+  .pc-5 { background: #fff5f0; }
+  .pc-5 .page-card-header { background: var(--orange); color: white; }
+  .pc-5 .page-num-badge { background: white; color: var(--orange); }
+
+  /* LOADING */
+  #loadingOverlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26,10,46,0.75);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 16px;
+  }
+  #loadingOverlay.active { display: flex; }
+  .loading-box {
+    background: var(--yellow);
+    border: 3px solid var(--ink);
+    border-radius: 16px;
+    padding: 32px 48px;
+    text-align: center;
+    box-shadow: 8px 8px 0 var(--ink);
+  }
+  .loading-box .spinner {
+    font-size: 3rem;
+    animation: spin 0.8s linear infinite;
+    display: block;
+    margin-bottom: 12px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-box p {
+    font-family: 'Bangers', cursive;
+    font-size: 1.4rem;
+    letter-spacing: 1.5px;
+    color: var(--ink);
+  }
+  .loading-box small {
+    font-size: 0.8rem;
+    color: #555;
+    font-weight: 600;
+  }
+
+  /* PROGRESS */
+  .progress-bar-wrap {
+    width: 240px;
+    height: 12px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-top: 12px;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--orange);
+    border-radius: 6px;
+    transition: width 0.3s ease;
+    width: 0%;
+  }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--ink);
+    color: var(--yellow);
+    border: 2.5px solid var(--yellow);
+    border-radius: 10px;
+    padding: 12px 20px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 0.9rem;
+    z-index: 200;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.3s;
+    pointer-events: none;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* STYLE COMIC SELECTOR */
+  .style-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+  }
+  .style-card {
+    border: 2.5px solid var(--ink);
+    border-radius: 10px;
+    padding: 12px 12px 10px;
+    cursor: pointer;
+    background: var(--paper);
+    transition: all 0.15s;
+    position: relative;
+    user-select: none;
+  }
+  .style-card:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px 0 var(--ink);
+  }
+  .style-card.selected {
+    background: var(--ink);
+    color: var(--yellow);
+    box-shadow: 4px 4px 0 var(--orange);
+  }
+  .style-card.selected .style-tags span {
+    background: rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.85);
+  }
+  .style-card-emoji {
+    font-size: 1.6rem;
+    margin-bottom: 6px;
+    display: block;
+    line-height: 1;
+  }
+  .style-card-name {
+    font-weight: 900;
+    font-size: 0.78rem;
+    letter-spacing: 0.3px;
+    line-height: 1.3;
+    margin-bottom: 5px;
+  }
+  .style-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 6px;
+  }
+  .style-tags span {
+    font-size: 0.65rem;
+    font-weight: 700;
+    background: #f0f0f0;
+    border-radius: 4px;
+    padding: 2px 6px;
+    color: #444;
+    white-space: nowrap;
+  }
+  .style-check {
+    position: absolute;
+    top: 8px; right: 8px;
+    width: 18px; height: 18px;
+    border: 2px solid var(--ink);
+    border-radius: 50%;
+    background: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.65rem;
+    font-weight: 900;
+  }
+  .style-card.selected .style-check {
+    background: var(--orange);
+    border-color: var(--orange);
+    color: white;
+  }
+
+  @media (max-width: 600px) {
+    .style-grid { grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 8px; }
+    .style-card { padding: 10px 10px 8px; }
+    .style-card-emoji { font-size: 1.35rem; }
+    .style-card-name { font-size: 0.72rem; }
+  }
+  @media (max-width: 360px) {
+    .style-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* --- TABLET: 601px – 860px --- */
+  @media (max-width: 860px) {
+    .header-inner { padding: 20px 16px 28px; gap: 14px; }
+    .header-icon  { width: 58px; height: 58px; font-size: 28px; }
+    .header-text h1 { font-size: 2rem; }
+
+    main { padding: 20px 14px 48px; }
+
+    .card { padding: 20px; }
+
+    .pages-grid {
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 14px;
+    }
+
+    .output-header { gap: 10px; }
+    .output-title  { font-size: 1.3rem; }
+  }
+
+  /* --- MOBILE: ≤ 600px --- */
+  @media (max-width: 600px) {
+    /* Header */
+    .header-inner  { flex-direction: column; align-items: flex-start; padding: 16px 14px 24px; gap: 10px; }
+    .header-icon   { width: 52px; height: 52px; font-size: 24px; border-radius: 10px; }
+    .header-text h1 { font-size: 1.55rem; letter-spacing: 1px; }
+    .header-text p  { font-size: 0.78rem; }
+
+    /* Main */
+    main { padding: 14px 10px 48px; }
+
+    /* Cards */
+    .card { padding: 16px 14px; border-radius: 10px; box-shadow: 4px 4px 0 var(--ink); }
+    .card-title { font-size: 1.1rem; margin-bottom: 14px; }
+
+    /* Form */
+    .form-grid { grid-template-columns: 1fr; gap: 12px; }
+    .form-grid .span2 { grid-column: 1; }
+    .field label { font-size: 0.75rem; }
+    .field input,
+    .field select,
+    .field textarea { font-size: 0.9rem; padding: 9px 12px; }
+
+    /* Char toggle */
+    .char-toggle { gap: 8px; }
+    .char-btn { font-size: 0.8rem; padding: 9px 8px; }
+
+    /* Generate button */
+    .btn-generate { font-size: 1.25rem; padding: 14px; letter-spacing: 1px; }
+
+    /* Output header */
+    .output-header { flex-direction: column; align-items: flex-start; }
+    .output-title  { font-size: 1.2rem; }
+    .btn-dl-all    { width: 100%; justify-content: center; font-size: 0.85rem; }
+
+    /* Page cards: single column */
+    .pages-grid { grid-template-columns: 1fr; gap: 12px; }
+    .page-card-footer { gap: 6px; }
+    .btn-copy, .btn-dl { font-size: 0.82rem; padding: 8px; }
+
+    /* Loading box */
+    .loading-box { padding: 24px 20px; }
+    .loading-box p { font-size: 1.1rem; }
+    .progress-bar-wrap { width: 100%; max-width: 200px; }
+
+    /* Toast */
+    .toast { left: 12px; right: 12px; bottom: 16px; font-size: 0.82rem; text-align: center; }
+  }
+
+  /* --- TINY MOBILE: ≤ 360px --- */
+  @media (max-width: 360px) {
+    .header-text h1 { font-size: 1.3rem; }
+    .btn-generate   { font-size: 1.1rem; }
+    .card           { padding: 12px 10px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="header-icon">📚</div>
+    <div class="header-text">
+      <h1>KOMIK EDUKASI PROMPT GEN</h1>
+      <p>Generator Prompt AI Image • Multi-Halaman • Siap Download</p>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- FORM CARD -->
+  <div class="card">
+    <div class="card-title">
+      <span class="badge" style="background:var(--yellow)">1</span>
+      ISI DATA KOMIK
+    </div>
+
+    <div class="form-grid">
+      <div class="field span2">
+        <label>Judul Komik <span class="req">*</span></label>
+        <input type="text" id="judul" placeholder="cth: Petualangan di Dunia Sel" />
+      </div>
+      <div class="field span2">
+        <label>Topik / Materi <span class="req">*</span></label>
+        <input type="text" id="topik" placeholder="cth: Sel dan Organel Sel pada Biologi SMP" />
+      </div>
+      <div class="field">
+        <label>Target Pembaca <span class="req">*</span></label>
+        <select id="target">
+          <option value="">-- Pilih Jenjang --</option>
+          <optgroup label="🏫 Sekolah Reguler">
+            <option value="Siswa TK / PAUD (usia 4-6 tahun)">TK / PAUD</option>
+            <option value="Siswa SD kelas 4-6 (usia 10-12 tahun)">SD (Kelas 4–6)</option>
+            <option value="Siswa SMP kelas 7-9 (usia 13-15 tahun)">SMP (Kelas 7–9)</option>
+            <option value="Siswa SMA kelas 10-12 (usia 16-18 tahun)">SMA (Kelas 10–12)</option>
+          </optgroup>
+          <optgroup label="🕌 Sekolah Islam Terpadu">
+            <option value="Siswa SDIT kelas 4-6 (usia 10-12 tahun), sekolah Islam terpadu">SDIT (Kelas 4–6)</option>
+            <option value="Siswa SMPIT kelas 7-9 (usia 13-15 tahun), sekolah Islam terpadu">SMPIT (Kelas 7–9)</option>
+            <option value="Siswa SMAIT kelas 10-12 (usia 16-18 tahun), sekolah Islam terpadu">SMAIT (Kelas 10–12)</option>
+          </optgroup>
+          <optgroup label="📖 Pesantren & Madrasah">
+            <option value="Santri Pondok Pesantren (usia 13-18 tahun)">Pondok Pesantren</option>
+            <option value="Siswa Madrasah Ibtidaiyah kelas 4-6 (usia 10-12 tahun)">MI (Kelas 4–6)</option>
+            <option value="Siswa Madrasah Tsanawiyah kelas 7-9 (usia 13-15 tahun)">MTs (Kelas 7–9)</option>
+            <option value="Siswa Madrasah Aliyah kelas 10-12 (usia 16-18 tahun)">MA (Kelas 10–12)</option>
+          </optgroup>
+          <optgroup label="🎓 Perguruan Tinggi">
+            <option value="Mahasiswa Universitas (usia 18-24 tahun)">Universitas / Mahasiswa</option>
+          </optgroup>
+          <optgroup label="👥 Umum">
+            <option value="Anak-anak umum (usia 5-10 tahun)">Umum — Anak-Anak</option>
+            <option value="Remaja umum (usia 13-17 tahun)">Umum — Remaja</option>
+            <option value="Dewasa umum (usia 18 tahun ke atas)">Umum — Dewasa</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="field">
+        <label>Jumlah Halaman <span class="req">*</span></label>
+        <select id="halaman">
+           <option value="1">1 Halaman</option>
+          <option value="2">2 Halaman</option>
+          <option value="3"  selected>3 Halaman</option>
+          <option value="4">4 Halaman</option>
+          <option value="5">5 Halaman</option>
+          <option value="6">6 Halaman</option>
+          <option value="7">7 Halaman</option>
+          <option value="8">8 Halaman</option>
+          <option value="9">9 Halaman</option>
+          <option value="10" >10 Halaman</option>
+        
+        </select>
+      </div>
+      <div class="field">
+        <label>Nama Sekolah <span class="req">*</span></label>
+        <input type="text" id="namaSekolah" placeholder="cth: SMP Negeri 3 Bandung" />
+      </div>
+      <div class="field">
+        <label>Alamat Sekolah <span class="req">*</span></label>
+        <input type="text" id="alamatSekolah" placeholder="cth: Jl. Merdeka No.5, Bandung, Jawa Barat" />
+      </div>
+      <div class="field span2">
+        <label>Ukuran Gambar <span class="req">*</span></label>
+        <select id="ukuranGambar">
+          <option value="vertical_9_16">📱 IG Reels/TikTok/Shorts/ Status WhatsApp — Vertikal 9:16</option>
+          <option value="portrait_4_5">🖼️ Instagram Post — Portrait 4:5</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHARACTER CARD -->
+  <div class="card">
+    <div class="card-title">
+      <span class="badge" style="background:var(--pink);color:white">2</span>
+      KARAKTER
+    </div>
+
+    <div class="char-toggle">
+      <button class="char-btn active" id="btnDefault" onclick="setCharMode('default')">👥 Gunakan Default</button>
+      <button class="char-btn" id="btnCustom" onclick="setCharMode('custom')">✏️ Karakter Custom</button>
+    </div>
+
+    <div id="defaultCharInfo" class="char-info">
+      <strong>Budi</strong> — Siswa laki-laki, rambut hitam pendek sedikit berdiri, kulit sawo matang, mata besar ekspresif, sedikit gemuk, tas ransel merah, penasaran dan energik.<br>
+      <strong>Siti</strong> — Siswi perempuan, wajah bulat, mata besar berbinar, tubuh ramping, buku catatan hijau, cerdas dan teliti.<br>
+      <strong>Pak Adi</strong> — Guru laki-laki, berkacamata, rambut rapi sedikit uban, kumis tipis, membawa buku tebal dan pointer, sabar dan komunikatif.
+      <br><em style="font-size:0.78rem;color:#666;margin-top:6px;display:block;">💡 Karakter default menyesuaikan otomatis dengan jenjang yang dipilih.</em>
+    </div>
+
+    <div id="customCharArea">
+      <div class="field">
+        <label>Deskripsi Karakter Custom</label>
+        <textarea id="customChar" placeholder="Contoh:&#10;Raka — Siswa laki-laki, rambut keriting, kulit cerah, suka sains, kacamata bulat.&#10;Dewi — Siswi perempuan, rambut panjang dikepang, aktif bertanya.&#10;Bu Nani — Guru perempuan, rambut pendek, berhijab, selalu membawa tablet."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- STYLE COMIC CARD -->
+  <div class="card">
+    <div class="card-title">
+      <span class="badge" style="background:var(--purple);color:white">3</span>
+      STYLE KOMIK
+    </div>
+
+    <div class="style-grid" id="styleGrid">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+
+  <!-- GENERATE BUTTON -->
+  <button class="btn-generate" onclick="generatePrompts()">
+    ⚡ GENERATE SEMUA PROMPT
+  </button>
+
+  <!-- OUTPUT -->
+  <div id="outputSection">
+    <div class="output-header">
+      <div class="output-title">🎨 PROMPT SIAP DIGUNAKAN</div>
+      <button class="btn-dl-all" onclick="downloadAll()">
+        📦 Download Semua (.zip)
+      </button>
+    </div>
+    <div class="pages-grid" id="pagesGrid"></div>
+  </div>
+
+</main>
+
+<!-- LOADING -->
+<div id="loadingOverlay">
+  <div class="loading-box">
+    <span class="spinner">⚙️</span>
+    <p>SEDANG MEMBUAT PROMPT...</p>
+    <small id="loadingStatus">Menginisialisasi...</small>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="progressFill"></div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ===================== STATE =====================
+let charMode = 'default';
+let generatedPrompts = [];
+let selectedStyle = 'anime_school';
+
+// ===================== STYLE DATA =====================
+const COMIC_STYLES = [
+  { id: 'cartoon_education', emoji: '🎨', name: 'Cartoon Education Style', tags: ['Warna cerah', 'Karakter lucu', 'TK & SD'], prompt: 'Cartoon education style, bright cheerful colors, friendly cute characters with round faces, simple expressive features, bold outlines, playful composition, child-friendly illustration, professional educational cartoon art' },
+  { id: 'anime_school', emoji: '🎌', name: 'Anime School Style', tags: ['Manga Jepang', 'Mata besar', 'SMP & SMA'], prompt: 'Anime manga style, large expressive eyes, clean line art, dynamic poses, detailed school setting, vibrant colors with cel shading, professional Japanese manga aesthetic, high-quality anime illustration' },
+  { id: 'chibi_comic', emoji: '🌟', name: 'Chibi Comic Style', tags: ['Kepala besar', 'Menggemaskan', 'Anak dini'], prompt: 'Chibi comic style, oversized heads with small cute bodies, super deformed proportions, maximum cuteness, pastel-toned vibrant colors, extremely expressive emotions, adorable kawaii chibi characters, cute educational illustration' },
+  { id: 'disney_storybook', emoji: '✨', name: 'Disney-Inspired Storybook Style', tags: ['Detail halus', 'Nuansa dongeng', 'Ramah anak'], prompt: 'Disney-inspired storybook illustration style, detailed fine art, fairytale warmth, cinematic composition, rich color palette, expressive friendly characters with elegant proportions, magical atmosphere, high-quality storybook artwork' },
+  { id: 'pixar_comic', emoji: '🎬', name: 'Pixar-Inspired Comic Style', tags: ['3D kartun', 'Ekspresi hidup', 'Modern'], prompt: 'Pixar-inspired comic style, 3D cartoon character aesthetic translated to 2D, highly expressive faces, subsurface scattering skin tones, cinematic lighting, modern and appealing character design, Pixar Animation quality illustration' },
+  { id: 'modern_webtoon', emoji: '📱', name: 'Modern Webtoon Style', tags: ['Format vertikal', 'Digital bersih', 'Medsos'], prompt: 'Modern webtoon style, vertical scroll format, clean digital coloring, crisp line art, soft color palette, semi-realistic proportions, contemporary Korean webtoon aesthetic, social media optimized comic art' },
+  { id: 'manga_bw', emoji: '⬛', name: 'Manga Black & White Style', tags: ['Hitam putih', 'Screentone', 'Ekspresi'], prompt: 'Black and white manga style, traditional screentone textures, strong ink line art, dramatic hatching, highly expressive character faces, classic Japanese manga composition, professional monochrome manga illustration' },
+  { id: 'colored_manga', emoji: '🖌️', name: 'Colored Manga Style', tags: ['Manga berwarna', 'Detail tinggi', 'Remaja'], prompt: 'Full-color manga style, vibrant manga coloring with soft gradients, detailed character designs, clean line art with beautiful color fills, popular colored manga aesthetic for educational content, high-detail professional manga illustration' },
+  { id: 'semi_realistic', emoji: '🖼️', name: 'Semi Realistic Comic Style', tags: ['Realistis-kartun', 'Proporsional', 'Serius'], prompt: 'Semi-realistic comic style, balanced blend of realistic and cartoon aesthetics, proportional human figures, detailed facial features, painterly coloring technique, mature and professional comic illustration suitable for serious educational topics' },
+  { id: 'european_comic', emoji: '🇫🇷', name: 'European Comic Style', tags: ['Mirip Tintin', 'Ligne claire', 'Mudah dibaca'], prompt: 'European ligne claire comic style, inspired by Tintin and Hergé, ultra-clean precise outlines, flat color fills without gradients, clear readable panel composition, no cross-hatching, classic Franco-Belgian BD comic aesthetic' },
+  { id: 'newspaper_comic', emoji: '📰', name: 'Classic Newspaper Comic Style', tags: ['Komik koran', 'Panel simpel', 'Dialog fokus'], prompt: 'Classic newspaper comic strip style, simple clean panels, bold outlines, flat colors, humor-focused composition, expressive simple characters, easy-to-read layout, retro American newspaper comic aesthetic' },
+  { id: 'islamic_children', emoji: '🌙', name: 'Islamic Children Comic Style', tags: ['Karakter sopan', 'Nuansa islami', 'Pesantren'], prompt: 'Islamic children comic style, modest and dignified character designs, all female characters wearing hijab, warm earthy Islamic color palette with green and gold accents, Arabic calligraphy decorative elements, clean wholesome illustration appropriate for Islamic educational institutions' },
+  { id: 'watercolor_storybook', emoji: '💧', name: 'Watercolor Storybook Style', tags: ['Cat air', 'Lembut & hangat', 'Kisah moral'], prompt: 'Watercolor storybook illustration style, soft watercolor washes, warm gentle color palette, loose expressive brushwork, dreamy soft edges, hand-painted texture, classic children book illustration warmth, suitable for moral and character stories' },
+  { id: 'flat_design_comic', emoji: '🔷', name: 'Flat Design Comic Style', tags: ['Bentuk simpel', 'Warna solid', 'Modern bersih'], prompt: 'Flat design comic style, geometric simplified shapes, solid bold colors with minimal shading, modern UI-inspired aesthetics, no gradients, clean vector-like illustration, contemporary flat art comic layout' },
+  { id: 'cute_kawaii', emoji: '🍬', name: 'Cute Kawaii Style', tags: ['Sangat imut', 'Warna pastel', 'Anak-anak'], prompt: 'Cute kawaii style, extremely adorable characters, soft pastel color palette, tiny dot eyes, blush cheeks, rounded fluffy shapes, sweet and innocent atmosphere, Japanese kawaii culture aesthetic, irresistibly cute educational illustration' },
+  { id: 'adventure_cartoon', emoji: '🚀', name: 'Adventure Cartoon Style', tags: ['Dinamis', 'Banyak aksi', 'Sains & eksplorasi'], prompt: 'Adventure cartoon style, dynamic energetic composition, bold action poses, dramatic perspective angles, vivid saturated colors, exciting and engaging storytelling visuals, suitable for science exploration and adventure themes, western animated series aesthetic' },
+  { id: 'infographic_comic', emoji: '📊', name: 'Educational Infographic Comic Style', tags: ['Komik + infografik', 'Elemen penjelasan', 'Pelajaran'], prompt: 'Educational infographic comic style, seamless blend of comic panels and infographic elements, labeled diagrams integrated into artwork, data visualization aesthetics, clear explanatory arrows and callouts, clean informational layout, textbook-quality educational illustration' },
+  { id: 'animated_3d', emoji: '🎮', name: '3D Animated Comic Style', tags: ['Seperti film animasi', 'Detail tinggi', 'Visual modern'], prompt: '3D animated movie comic style, rendered 3D aesthetic translated to comic format, subsurface scattering, ambient occlusion, cinematic lighting, high-detail character models, modern animation studio quality, similar to DreamWorks or Illumination film style' },
+  { id: 'ghibli_inspired', emoji: '🌿', name: 'Studio Ghibli Inspired Style', tags: ['Latar indah', 'Nuansa hangat', 'Akhlak'], prompt: 'Studio Ghibli inspired illustration style, beautifully detailed lush backgrounds, warm and nostalgic color palette, hand-painted texture, expressive naturalistic character designs, gentle atmosphere, environmental details rich with life, Hayao Miyazaki aesthetic warmth and sincerity' },
+  { id: 'professional_school', emoji: '🏫', name: 'Professional School Comic Style', tags: ['Karakter konsisten', 'Sekolah realistis', 'Multi-halaman'], prompt: 'Professional school educational comic style, highly consistent character designs across all pages, realistic Indonesian school environment, clean professional illustration, balanced realistic and cartoon aesthetics, branding-quality artwork suitable for official school publications and multi-page educational comics' },
+];
+
+function buildStyleGrid() {
+  const grid = document.getElementById('styleGrid');
+  grid.innerHTML = '';
+  COMIC_STYLES.forEach(s => {
+    const card = document.createElement('div');
+    card.className = 'style-card' + (s.id === selectedStyle ? ' selected' : '');
+    card.innerHTML = `
+      <div class="style-check">${s.id === selectedStyle ? '✓' : ''}</div>
+      <span class="style-card-emoji">${s.emoji}</span>
+      <div class="style-card-name">${s.name}</div>
+      <div class="style-tags">${s.tags.map(t => `<span>${t}</span>`).join('')}</div>`;
+    card.addEventListener('click', () => selectStyle(s.id));
+    grid.appendChild(card);
+  });
+}
+
+function selectStyle(id) {
+  selectedStyle = id;
+  buildStyleGrid();
+}
+
+buildStyleGrid();
+
+function setCharMode(mode) {
+  charMode = mode;
+  document.getElementById('btnDefault').classList.toggle('active', mode === 'default');
+  document.getElementById('btnCustom').classList.toggle('active', mode === 'custom');
+  document.getElementById('defaultCharInfo').style.display = mode === 'default' ? 'block' : 'none';
+  document.getElementById('customCharArea').style.display = mode === 'custom' ? 'block' : 'none';
+}
+
+// ===================== TOAST =====================
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ===================== HELPERS =====================
+function getSeragam(target) {
+  if (target.includes('TK') || target.includes('PAUD')) return 'seragam TK / PAUD berwarna cerah';
+  if (target.includes('SDIT') || target.includes('SD') || target.includes('Ibtidaiyah') || target.includes('Anak-anak')) return 'seragam sekolah putih-merah';
+  if (target.includes('SMPIT') || target.includes('SMP') || target.includes('Tsanawiyah') || target.includes('Remaja')) return 'seragam sekolah putih-biru';
+  if (target.includes('SMAIT') || target.includes('SMA') || target.includes('SMK') || target.includes('Aliyah')) return 'seragam sekolah putih-abu-abu';
+  if (target.includes('Pesantren') || target.includes('Santri')) return 'pakaian santri (baju koko putih, sarung, peci untuk pria; gamis dan hijab untuk wanita)';
+  if (target.includes('Mahasiswa') || target.includes('Universitas')) return 'pakaian kasual kampus rapi';
+  if (target.includes('Dewasa')) return 'pakaian kasual rapi';
+  return 'seragam sekolah standar';
+}
+
+function isMadrasah(target) {
+  return target.includes('Madrasah') || target.includes('Ibtidaiyah') || target.includes('Tsanawiyah') || target.includes('Aliyah') || target.includes('SDIT') || target.includes('SMPIT') || target.includes('SMAIT') || target.includes('Pesantren') || target.includes('Santri');
+}
+
+function getDefaultChars(target) {
+  const seragam = getSeragam(target);
+  const madrasah = isMadrasah(target);
+  const sitiHijab = madrasah ? ', berhijab biru muda' : '';
+
+  if (target.includes('TK') || target.includes('PAUD') || target.includes('Anak-anak')) {
+    return `- Adi: anak laki-laki, rambut hitam pendek, kulit sawo matang, mata besar ekspresif, tas ransel warna-warni, ${seragam}, ceria dan penasaran
+- Nisa: anak perempuan, rambut dua kuncir${madrasah ? ', berhijab pink' : ''}, pipi chubby, mata besar berbinar, ${seragam}, aktif dan suka bertanya
+- Bu Guru: guru perempuan, rambut pendek rapi${madrasah ? ', berhijab' : ''}, senyum hangat, membawa boneka edukatif, sabar dan menyenangkan`;
+  }
+  if (target.includes('Pesantren') || target.includes('Santri')) {
+    return `- Faiz: santri laki-laki, baju koko putih, sarung, peci hitam, rambut rapi, kulit sawo matang, mata antusias, membawa kitab
+- Laila: santriwati perempuan, gamis putih, hijab biru, wajah bulat bersih, membawa buku catatan, cerdas dan teliti
+- Ustadz Hasan: ustadz laki-laki, jubah putih, surban, janggut tipis, berkacamata, membawa Al-Quran, bijaksana dan komunikatif`;
+  }
+  if (target.includes('Mahasiswa') || target.includes('Universitas')) {
+    return `- Raka: mahasiswa laki-laki, rambut rapi, kemeja casual, tas laptop hitam, kulit sawo matang, ekspresif dan analitis
+- Dinda: mahasiswi perempuan${madrasah ? ', berhijab' : ''}, rambut panjang dikuncir, blouse rapi, membawa tablet, kritis dan aktif
+- Prof. Andi: dosen laki-laki, berkacamata, rambut beruban rapi, kemeja batik dan jas, membawa map tebal, berwibawa`;
+  }
+  if (target.includes('Dewasa') || target.includes('Remaja')) {
+    return `- Ardi: pria muda, rambut rapi, kaos casual, ekspresif dan ingin tahu
+- Sari: wanita muda${madrasah ? ', berhijab' : ''}, rambut panjang, outfit casual rapi, cerdas dan teliti
+- Pak Bimo: pria dewasa paruh baya, berkacamata, kemeja rapi, ramah dan berpengalaman`;
+  }
+
+  return `- Budi: siswa laki-laki, rambut hitam pendek sedikit berdiri, kulit sawo matang, mata besar ekspresif, sedikit gemuk, tas ransel merah, ${seragam}, penasaran dan energik
+- Siti: siswi perempuan, wajah bulat, mata besar berbinar, tubuh ramping, buku catatan hijau${sitiHijab}, ${seragam}, cerdas dan teliti
+- Pak Adi: guru laki-laki, berkacamata, rambut rapi sedikit uban, kumis tipis, membawa buku tebal dan pointer, kemeja batik rapi`;
+}
+
+function getPageType(pageNum, totalPages) {
+  if (totalPages === 3) {
+    if (pageNum === 1) return { type: 'COVER', label: 'Cover & Pertanyaan Utama' };
+    if (pageNum === 2) return { type: 'PENJELASAN', label: 'Penjelasan Konsep & Diagram' };
+    return { type: 'KESIMPULAN', label: 'Praktik, Aplikasi & Kesimpulan' };
+  }
+  const map = {
+    1: { type: 'COVER', label: 'Cover' },
+    2: { type: 'OBSERVASI', label: 'Observasi' },
+    3: { type: 'KONSEP', label: 'Konsep Dasar' },
+    4: { type: 'PENDALAMAN', label: 'Pendalaman' },
+    5: { type: 'EKSPERIMEN', label: 'Praktik / Eksperimen' },
+    6: { type: 'KESIMPULAN', label: 'Kesimpulan Ilmiah' },
+  };
+  if (map[pageNum]) return map[pageNum];
+  if (pageNum > 6) return { type: 'PENDALAMAN', label: `Pendalaman Lanjutan ${pageNum - 5}` };
+  return { type: 'MATERI', label: 'Materi' };
+}
+
+function getPanelCount(pageType) {
+  const counts = {
+    COVER: 4, OBSERVASI: 5, KONSEP: 5, PENJELASAN: 5,
+    PENDALAMAN: 5, EKSPERIMEN: 6, KESIMPULAN: 4, MATERI: 5
+  };
+  return counts[pageType] || 5;
+}
+
+function getLayout(panelCount) {
+  const layouts = { 3: '3-panel layout', 4: '4-panel layout (2x2 grid)', 5: '5-panel layout (2-1-2 or 2-3 split)', 6: '6-panel layout (3x2 grid)' };
+  return layouts[panelCount] || '4-panel layout';
+}
+
+function getBadgeDecor(pageNum) {
+  const badges = [
+    'circular yellow star burst badge', 'ribbon banner with blue accent', 'book icon badge',
+    'light bulb idea icon badge', 'microscope science icon badge', 'rocket launch icon badge',
+    'green leaf nature badge', 'cloud shape badge', 'diamond star badge', 'planet orbit badge',
+    'chalkboard icon badge', 'school emblem badge', 'hexagon geometry badge'
+  ];
+  return badges[(pageNum - 1) % badges.length];
+}
+
+// ===================== PROMPT BUILDER =====================
+function buildPagePrompt(data, pageNum) {
+  const { judul, topik, target, totalPages, namaSekolah, alamatSekolah, chars, ukuranGambar, styleComic } = data;
+  const { type, label } = getPageType(pageNum, totalPages);
+  const panelCount = getPanelCount(type);
+  const layout = getLayout(panelCount);
+  const badge = getBadgeDecor(pageNum);
+  const seragam = getSeragam(target);
+  const madrasah = isMadrasah(target);
+  const hijabRule = madrasah ? 'ALL female students and teachers MUST wear hijab. All male students wear long pants. Students may wear peci.' : '';
+
+  const styleObj = COMIC_STYLES.find(s => s.id === styleComic) || COMIC_STYLES[1];
+  const stylePromptStr = styleObj.prompt;
+
+  const ukuranLabel = ukuranGambar === 'portrait_4_5'
+    ? 'Instagram Post Portrait 4:5 — 1080 × 1350 pixels'
+    : 'Vertical 9:16 Full HD — 1080 × 1920 pixels (Instagram Reels / TikTok / YouTube Shorts / WhatsApp Status)';
+  const aspectNote = ukuranGambar === 'portrait_4_5'
+    ? 'Compose the full comic page in portrait 4:5 aspect ratio (1080 × 1350 px). All panels arranged vertically to fill this format optimally.'
+    : 'Compose the full comic page in vertical 9:16 aspect ratio (1080 × 1920 px). All panels stacked vertically to fill the tall format optimally.';
+
+  const isCover = pageNum === 1;
+  const isLast = pageNum === totalPages;
+
+  // Build panels description based on type
+  let panelDescs = [];
+  let dialogs = [];
+
+  if (type === 'COVER') {
+    panelDescs = [
+      `LARGE HERO PANEL (spanning top half): Dynamic illustration of characters ${chars.split('\n')[0].split(':')[0]} and others in school setting, excited expression, ${topik} visual theme in background, energetic composition`,
+      `School entrance or classroom exterior with clearly visible school signboard reading "${namaSekolah}" — ${alamatSekolah} environment architecture, tropical Indonesian school setting`,
+      `Characters looking curious at the topic theme, question marks and topic-related icons floating around them`,
+      `Title panel: Bold large stylized text "${judul}" in comic lettering style, with topik subtitle "${topik}" below, decorative comic effects`
+    ];
+    dialogs = [
+      `Character 1: "Hei, hari ini kita belajar tentang ${topik}!"`,
+      `Character 2: "Wah, seru! Aku penasaran sekali!"`,
+      `Teacher: "Mari kita mulai petualangan ilmiah kita!"`,
+      `Narration box: "Selamat datang di komik edukasi ${judul}!"`
+    ];
+  } else if (type === 'OBSERVASI') {
+    panelDescs = [
+      `Characters arriving at observation location/lab, excited expressions, school setting related to ${topik}`,
+      `Close-up of characters observing phenomenon related to ${topik}, pointing and taking notes`,
+      `LARGE PANEL: Detailed visual of the ${topik} phenomenon being observed, highly educational illustration with labels`,
+      `Characters discussing their observations, speech bubbles with questions`,
+      `Siti writing in green notebook, Budi drawing diagram, expressions of discovery`
+    ];
+    dialogs = [
+      `Character 1: "Lihat! Ada yang menarik di sini!"`,
+      `Character 2: "Apa ya yang terjadi dengan ${topik}?"`,
+      `Teacher: "Bagus! Amati dengan teliti dan catat semua yang kalian lihat."`,
+      `Character 1: "Aku menemukan sesuatu yang unik!"`,
+      `Narration: "Observasi adalah langkah pertama dalam sains!"`
+    ];
+  } else if (type === 'KONSEP' || type === 'PENJELASAN') {
+    panelDescs = [
+      `Teacher Pak Adi at whiteboard/projector explaining ${topik} concept, pointer in hand, clear diagram on board`,
+      `LARGE DIAGRAM PANEL: Detailed labeled educational diagram of ${topik} main concept, arrows showing processes, bright colors, clear text labels in Indonesian`,
+      `Students listening attentively, Siti taking notes in green notebook, Budi looking amazed`,
+      `Close-up of key concept visualization for ${topik} with detailed scientific accuracy`,
+      `Teacher explaining with enthusiasm, students raising hands with questions`
+    ];
+    dialogs = [
+      `Teacher: "Perhatikan diagram ini! Ini adalah konsep dasar dari ${topik}."`,
+      `Diagram label: "Bagian-bagian penting dari ${topik}"`,
+      `Siti: "Oh, jadi begitu cara kerjanya! Aku mengerti sekarang."`,
+      `Budi: "Pak, kenapa ini bisa terjadi?"`,
+      `Teacher: "Pertanyaan yang sangat bagus, Budi! Mari kita pelajari lebih dalam."`
+    ];
+  } else if (type === 'PENDALAMAN') {
+    panelDescs = [
+      `Characters in deeper study/discussion about advanced aspects of ${topik}`,
+      `LARGE PANEL: Complex but clear educational diagram showing deeper relationships in ${topik}, multiple labeled components`,
+      `Characters comparing notes, collaborative learning scene`,
+      `Teacher introducing a surprising or interesting fact about ${topik}`,
+      `Students looking amazed/enlightened with thought bubbles showing understanding`
+    ];
+    dialogs = [
+      `Teacher: "Sekarang kita akan mempelajari lebih dalam tentang ${topik}."`,
+      `Character 2: "Wah, ternyata ada banyak hal menarik!"`,
+      `Character 1: "Ini jauh lebih kompleks dari yang aku bayangkan!"`,
+      `Teacher: "Fakta menarik: ${topik} memiliki peran penting dalam kehidupan kita sehari-hari."`,
+      `All characters: "Wow! Kami tidak tahu itu sebelumnya!"`
+    ];
+  } else if (type === 'EKSPERIMEN') {
+    panelDescs = [
+      `Students and teacher preparing experiment/practical activity related to ${topik}, safety equipment visible`,
+      `LARGE PANEL: Step-by-step visual guide of experiment procedure for ${topik}, numbered steps, clear illustrations`,
+      `Characters conducting experiment, hands-on activity, engaged expressions`,
+      `Close-up of experiment results/observations, data being recorded`,
+      `Characters comparing results and discussing findings`,
+      `Results panel showing outcome of experiment related to ${topik} with data/observations illustrated`
+    ];
+    dialogs = [
+      `Teacher: "Sekarang giliran kalian untuk mencoba sendiri!"`,
+      `Character 1: "Asyik! Eksperimen dimulai!"`,
+      `Character 2: "Aku mencatat semua datanya dengan teliti."`,
+      `Character 1: "Lihat hasilnya! Ini sesuai dengan yang dijelaskan tadi!"`,
+      `Teacher: "Bagus sekali! Kalian telah berhasil membuktikannya."`,
+      `Narration: "Sains adalah belajar sambil melakukan!"`
+    ];
+  } else if (type === 'KESIMPULAN') {
+    panelDescs = [
+      `LARGE PANEL: All characters together in celebratory learning scene, summary board visible with key points about ${topik}`,
+      `Summary/infographic panel: Key facts and conclusions about ${topik} displayed in educational poster style within the comic, clear Indonesian text`,
+      `Characters sharing what they learned, happy satisfied expressions`,
+      `Final panel: Characters waving goodbye to reader, motivational message about science and learning, school background`
+    ];
+    dialogs = [
+      `Teacher: "Hari ini kita telah belajar banyak tentang ${topik}. Apa yang kalian simpulkan?"`,
+      `Character 2: "Kesimpulannya: ${topik} sangat penting dan menarik untuk dipelajari!"`,
+      `Character 1: "Aku jadi semakin cinta sains!"`,
+      `All characters: "Terus semangat belajar, teman-teman! Sains itu menyenangkan!"`
+    ];
+  }
+
+  // Fill remaining if needed
+  while (panelDescs.length < panelCount) {
+    panelDescs.push(`Supporting educational scene related to ${topik}`);
+  }
+  while (dialogs.length < panelCount) {
+    dialogs.push(`Character: "Pembelajaran tentang ${topik} sangat bermanfaat!"`);
+  }
+
+  const prevPage = pageNum > 1 ? `Continuing from Page ${pageNum-1} (${getPageType(pageNum-1, totalPages).label}) — characters maintain same design and clothing` : 'This is the first page — establish character designs and school setting';
+  const nextPage = pageNum < totalPages ? `Leading into Page ${pageNum+1} (${getPageType(pageNum+1, totalPages).label}) — maintain story continuity` : 'This is the final page — conclude the educational story';
+
+  const panelLines = panelDescs.slice(0, panelCount).map((d, i) => `Panel ${i+1}:\n${d}`).join('\n\n');
+  const dialogLines = dialogs.slice(0, panelCount).map((d, i) => `Panel ${i+1}:\n${d}`).join('\n\n');
+
+  return `# PAGE ${pageNum} PROMPT
+
+PAGE ${pageNum} OF ${totalPages}
+
+COMIC STYLE
+${styleObj.emoji} ${styleObj.name}
+${stylePromptStr}
+
+IMAGE SIZE & FORMAT
+${ukuranLabel}
+${aspectNote}
+
+PAGE NUMBER DISPLAY
+Show only page number digit "${pageNum}" in bottom-right corner.
+Use a unique decorative page-number badge: ${badge}
+The number must be part of the comic illustration artwork, not an overlay.
+The number "${pageNum}" must be fully visible, unobstructed by panels, speech bubbles, or characters.
+
+SCHOOL IDENTITY
+School Name: ${namaSekolah}
+School Address: ${alamatSekolah}
+${isCover ? `School signboard showing "${namaSekolah}" must be clearly visible in this page.` : 'School environment consistent with established setting from page 1.'}
+
+TITLE
+${isCover ? `"${judul}" — displayed as large bold comic-style title lettering\nSubtitle: "${topik}"` : 'No Title (title only on page 1)'}
+
+PAGE TYPE: ${label}
+
+PANEL COUNT
+${panelCount} panels
+
+LAYOUT USED
+${layout}
+${panelCount >= 4 ? 'Include at least one large/dominant panel for the key visual element.' : ''}
+
+ACTIVE CHARACTERS
+${chars}
+${madrasah ? `IMPORTANT: ${hijabRule}` : ''}
+ALL characters wear: ${seragam}
+Character designs must be 100% consistent with all other pages.
+
+SETTING
+${isCover ? `School entrance of "${namaSekolah}", ${alamatSekolah} — tropical Indonesian school architecture, lush green vegetation, appropriate weather and atmosphere for the region. School signboard prominently displayed.` : `Interior/exterior school setting appropriate for ${label} activity — consistent with established ${namaSekolah} environment. ${alamatSekolah} cultural and architectural context.`}
+Topic visual theme: ${topik}
+
+COMIC PANELS
+
+${panelLines}
+
+DIALOG
+
+${dialogLines}
+
+VISUAL REQUIREMENTS
+• ${stylePromptStr}
+• Educational comic page for ${target}
+• Bright vibrant colors appropriate to the selected style
+• Clean line art with visible comic panel borders and slight drop shadows
+• Large readable Indonesian text in speech bubbles
+• Speech bubbles: varied styles (round, thought cloud, shout burst)
+• Highly detailed background matching ${alamatSekolah} environment
+• Consistent character design — same face, hair, body, accessories every panel
+• Consistent clothing: ${seragam}${madrasah ? ' with hijab for all female characters' : ''}
+• Child friendly and age-appropriate for ${target}
+• Textbook quality illustration
+• Output size: ${ukuranLabel}
+• ${aspectNote}
+• High resolution 300dpi
+• No watermark
+• No logo
+• Visible page number "${pageNum}" in bottom-right corner
+• Page number inside decorative badge: ${badge}
+• Badge is integrated comic artwork element
+• Page number fully visible and unobstructed
+• Consistent page-number badge style across all pages but unique design per page
+• Only show the digit ${pageNum} — no word "Page", "Halaman", or "Hal"
+${isLast ? '• Final page must clearly show scientific conclusions and summary of ' + topik : ''}
+
+CONTINUITY FROM PREVIOUS PAGE
+${prevPage}
+
+CONTINUITY TO NEXT PAGE
+${nextPage}
+
+---
+GLOBAL STYLE REFERENCE: ${styleObj.name} — ${stylePromptStr}. Educational comic for ${target}, Indonesian school setting, consistent character design and clothing across all pages, large readable Indonesian text, speech bubbles, textbook quality, child friendly, high resolution, no watermark.`;
+}
+
+// ===================== GENERATE =====================
+async function generatePrompts() {
+  const judul = document.getElementById('judul').value.trim();
+  const topik = document.getElementById('topik').value.trim();
+  const target = document.getElementById('target').value;
+  const totalPages = parseInt(document.getElementById('halaman').value);
+  const namaSekolah = document.getElementById('namaSekolah').value.trim();
+  const alamatSekolah = document.getElementById('alamatSekolah').value.trim();
+  const ukuranGambar = document.getElementById('ukuranGambar').value;
+
+  if (!judul || !topik || !target || !namaSekolah || !alamatSekolah) {
+    showToast('⚠️ Lengkapi semua field yang wajib diisi!');
+    return;
+  }
+
+  let chars = '';
+  if (charMode === 'default') {
+    chars = getDefaultChars(target);
+  } else {
+    const custom = document.getElementById('customChar').value.trim();
+    chars = custom || getDefaultChars(target);
+  }
+
+  const data = { judul, topik, target, totalPages, namaSekolah, alamatSekolah, chars, ukuranGambar, styleComic: selectedStyle };
+
+  // Show loading
+  const overlay = document.getElementById('loadingOverlay');
+  overlay.classList.add('active');
+  generatedPrompts = [];
+
+  for (let i = 1; i <= totalPages; i++) {
+    document.getElementById('loadingStatus').textContent = `Membuat prompt halaman ${i} dari ${totalPages}...`;
+    document.getElementById('progressFill').style.width = ((i / totalPages) * 100) + '%';
+    await new Promise(r => setTimeout(r, 120));
+    generatedPrompts.push({
+      page: i,
+      label: getPageType(i, totalPages).label,
+      prompt: buildPagePrompt(data, i)
+    });
+  }
+
+  overlay.classList.remove('active');
+  renderOutput(judul, totalPages);
+}
+
+// ===================== RENDER =====================
+function renderOutput(judul, totalPages) {
+  document.getElementById('outputSection').style.display = 'block';
+
+  const grid = document.getElementById('pagesGrid');
+  grid.innerHTML = '';
+
+  const colors = ['pc-0','pc-1','pc-2','pc-3','pc-4','pc-5'];
+
+  generatedPrompts.forEach((item, idx) => {
+    const colorClass = colors[idx % colors.length];
+    // Safe text preview — escape HTML entities
+    const rawPreview = item.prompt.substring(0, 300);
+    const safePreview = rawPreview
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/\n/g,'<br>');
+
+    const card = document.createElement('div');
+    card.className = `page-card ${colorClass}`;
+
+    // Build header
+    const header = document.createElement('div');
+    header.className = 'page-card-header';
+    header.innerHTML = `
+      <div class="page-num-badge">${item.page}</div>
+      <div>
+        <div class="page-card-title">Halaman ${item.page}</div>
+        <div class="page-card-sub">${item.label}</div>
+      </div>`;
+
+    // Build body
+    const body = document.createElement('div');
+    body.className = 'page-card-body';
+    const preview = document.createElement('div');
+    preview.className = 'page-preview';
+    preview.innerHTML = safePreview + '...';
+    body.appendChild(preview);
+
+    // Build footer with buttons — use addEventListener (no inline onclick)
+    const footer = document.createElement('div');
+    footer.className = 'page-card-footer';
+
+    const btnCopy = document.createElement('button');
+    btnCopy.className = 'btn-copy';
+    btnCopy.innerHTML = '📋 Copy';
+    btnCopy.addEventListener('click', function() {
+      const promptText = generatedPrompts[idx].prompt;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(promptText).then(() => {
+          showToast('✅ Prompt Halaman ' + generatedPrompts[idx].page + ' disalin!');
+        }).catch(() => fallbackCopy(promptText, idx));
+      } else {
+        fallbackCopy(promptText, idx);
+      }
+    });
+
+    const btnDl = document.createElement('button');
+    btnDl.className = 'btn-dl';
+    btnDl.innerHTML = '💾 Download';
+    btnDl.addEventListener('click', function() {
+      downloadSingle(idx);
+    });
+
+    footer.appendChild(btnCopy);
+    footer.appendChild(btnDl);
+
+    card.appendChild(header);
+    card.appendChild(body);
+    card.appendChild(footer);
+    grid.appendChild(card);
+  });
+
+  document.getElementById('outputSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ===================== ACTIONS =====================
+function fallbackCopy(text, idx) {
+  // Fallback copy using textarea
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  try {
+    document.execCommand('copy');
+    showToast('✅ Prompt Halaman ' + (idx + 1) + ' disalin!');
+  } catch(e) {
+    showToast('⚠️ Gagal menyalin, coba lagi.');
+  }
+  document.body.removeChild(ta);
+}
+
+function downloadSingle(idx) {
+  const item = generatedPrompts[idx];
+  if (!item || !item.prompt) {
+    showToast('⚠️ Prompt tidak ditemukan!');
+    return;
+  }
+  const filename = 'prompt_hal' + item.page + '_' + item.label.toLowerCase().replace(/[\s\/]+/g,'-').replace(/[^a-z0-9\-]/g,'') + '.txt';
+  triggerDownload(item.prompt, filename);
+  showToast('💾 Halaman ' + item.page + ' diunduh!');
+}
+
+function triggerDownload(text, filename) {
+  const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => {
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }, 200);
+}
+
+async function downloadAll() {
+  if (generatedPrompts.length === 0) {
+    showToast('⚠️ Belum ada prompt yang dibuat!');
+    return;
+  }
+
+  try {
+    if (typeof JSZip === 'undefined') {
+      await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js');
+    }
+    const zip = new JSZip();
+    const folder = zip.folder('prompt_komik_edukasi');
+    generatedPrompts.forEach(item => {
+      const fn = 'halaman_' + item.page + '_' + item.label.toLowerCase().replace(/[\s\/]+/g,'-').replace(/[^a-z0-9\-]/g,'') + '.txt';
+      folder.file(fn, item.prompt);
+    });
+    const combined = generatedPrompts.map(item =>
+      '='.repeat(60) + '\nHALAMAN ' + item.page + ': ' + item.label + '\n' + '='.repeat(60) + '\n\n' + item.prompt
+    ).join('\n\n\n');
+    folder.file('SEMUA_PROMPT_GABUNGAN.txt', combined);
+    const blob = await zip.generateAsync({ type: 'blob' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'prompt_komik_edukasi.zip';
+    a.style.display = 'none';
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 200);
+    showToast('📦 Semua prompt diunduh sebagai ZIP!');
+  } catch(e) {
+    // Fallback: combined txt
+    const combined = generatedPrompts.map(item =>
+      '='.repeat(60) + '\nHALAMAN ' + item.page + ': ' + item.label + '\n' + '='.repeat(60) + '\n\n' + item.prompt
+    ).join('\n\n\n');
+    triggerDownload(combined, 'SEMUA_PROMPT_KOMIK_EDUKASI.txt');
+    showToast('📄 Semua prompt diunduh sebagai TXT!');
+  }
+}
+
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = src;
+    s.onload = resolve;
+    s.onerror = reject;
+    document.head.appendChild(s);
+  });
+}
+</script>
+</body>
+</html>
