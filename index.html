@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Generator Prompt Komik Edukasi</title>
+<title>Generator Komik Edukasi</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@400;600;700;800;900&family=Comic+Neue:wght@400;700&display=swap');
 
@@ -500,7 +500,7 @@
   <div class="header-inner">
     <div class="header-icon">📚</div>
     <div class="header-text">
-      <h1>KOMIK EDUKASI</h1>
+      <h1>KOMIK EDUKASI PROMPT GEN</h1>
       <p>Generator Prompt AI Image • Multi-Halaman • Siap Download</p>
     </div>
   </div>
@@ -775,22 +775,29 @@ function getDefaultChars(target) {
 }
 
 function getPageType(pageNum, totalPages) {
-  if (totalPages === 3) {
-    if (pageNum === 1) return { type: 'COVER', label: 'Cover & Pertanyaan Utama' };
-    if (pageNum === 2) return { type: 'PENJELASAN', label: 'Penjelasan Konsep & Diagram' };
-    return { type: 'KESIMPULAN', label: 'Praktik, Aplikasi & Kesimpulan' };
-  }
-  const map = {
-    1: { type: 'COVER', label: 'Cover' },
-    2: { type: 'OBSERVASI', label: 'Observasi' },
-    3: { type: 'KONSEP', label: 'Konsep Dasar' },
-    4: { type: 'PENDALAMAN', label: 'Pendalaman' },
-    5: { type: 'EKSPERIMEN', label: 'Praktik / Eksperimen' },
-    6: { type: 'KESIMPULAN', label: 'Kesimpulan Ilmiah' },
-  };
-  if (map[pageNum]) return map[pageNum];
-  if (pageNum > 6) return { type: 'PENDALAMAN', label: `Pendalaman Lanjutan ${pageNum - 5}` };
-  return { type: 'MATERI', label: 'Materi' };
+  // Halaman pertama selalu COVER, halaman terakhir selalu KESIMPULAN
+  if (pageNum === 1) return { type: 'COVER', label: 'Cover' };
+  if (pageNum === totalPages) return { type: 'KESIMPULAN', label: 'Kesimpulan Ilmiah' };
+
+  // Khusus 3 halaman: tengah = PENJELASAN
+  if (totalPages === 3) return { type: 'PENJELASAN', label: 'Penjelasan Konsep & Diagram' };
+
+  // Urutan tipe untuk halaman tengah (halaman 2 s.d. totalPages-1)
+  const middleTypes = [
+    { type: 'OBSERVASI',   label: 'Observasi' },
+    { type: 'KONSEP',      label: 'Konsep Dasar' },
+    { type: 'PENDALAMAN',  label: 'Pendalaman' },
+    { type: 'EKSPERIMEN',  label: 'Praktik / Eksperimen' },
+    { type: 'PENDALAMAN',  label: 'Pendalaman Lanjutan' },
+    { type: 'PENDALAMAN',  label: 'Pendalaman Lanjutan 2' },
+    { type: 'PENDALAMAN',  label: 'Pendalaman Lanjutan 3' },
+    { type: 'PENDALAMAN',  label: 'Pendalaman Lanjutan 4' },
+  ];
+
+  // index 0 = halaman 2, index 1 = halaman 3, dst.
+  const midIndex = pageNum - 2;
+  if (midIndex < middleTypes.length) return middleTypes[midIndex];
+  return { type: 'PENDALAMAN', label: `Pendalaman Lanjutan ${midIndex - 2}` };
 }
 
 function getPanelCount(pageType) {
