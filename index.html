@@ -774,15 +774,63 @@ function getDefaultChars(target) {
   return `- Budi: siswa laki-laki, rambut hitam pendek sedikit berdiri, kulit sawo matang, mata besar ekspresif, sedikit gemuk, tas ransel merah, ${seragam}, penasaran dan energik\n- Siti: siswi perempuan, wajah bulat, mata besar berbinar, tubuh ramping, buku catatan hijau${sitiHijab}, ${seragam}, cerdas dan teliti\n- Pak Adi: guru laki-laki, berkacamata, rambut rapi sedikit uban, kumis tipis, membawa buku tebal dan pointer, kemeja batik rapi`;
 }
 
-function getPageType(pageNum, totalPages) {
-  // Halaman pertama selalu COVER, halaman terakhir selalu KESIMPULAN
-  if (pageNum === 1) return { type: 'COVER', label: 'Cover' };
-  if (pageNum === totalPages) return { type: 'KESIMPULAN', label: 'Kesimpulan Ilmiah' };
+// ===================== SCIENCE TOPIC DETECTION =====================
+function isScienceTopic(judul, topik) {
+  const keywords = [
+    // Mata pelajaran & sains
+    'biologi','fisika','kimia','matematika','ipa','ips','sejarah','geografi',
+    'ekonomi','sosiologi','astronomi','geologi','ekologi','anatomi','fisiologi',
+    'genetika','evolusi','kimia','termodinamika','elektromagnetik','mekanika',
+    'kalkulus','aljabar','geometri','statistik','trigonometri','logaritma',
+    'sel','atom','molekul','enzim','fotosintesis','respirasi','osmosis',
+    'ekosistem','rantai makanan','siklus air','tata surya','planet','bintang',
+    'reaksi kimia','larutan','asam basa','ph','redoks','ikatan kimia',
+    'hukum newton','gaya','energi','listrik','magnet','gelombang','optik',
+    'panas','suhu','tekanan','fluida','gravitasi','relativitas',
+    'sejarah','revolusi','kerajaan','peradaban','penjajahan','kemerdekaan',
+    'peta','iklim','cuaca','benua','samudra','gunung','sungai',
+    'permintaan','penawaran','inflasi','ekonomi','pasar','produksi',
+    'pancasila','uud','hukum','negara','demokrasi','ppkn',
+    'bahasa indonesia','bahasa inggris','grammar','tata bahasa','sastra',
+    'materi','pelajaran','konsep','rumus','teori','praktikum','eksperimen',
+    'laboratorium','diagram','grafik','tabel','data','penelitian',
+    'sains','science','math','biology','physics','chemistry',
+    'teknologi','komputer','coding','pemrograman','algoritma',
+    'pendidikan','edukasi','belajar ilmu','bab','materi pokok'
+  ];
+  const combined = (judul + ' ' + topik).toLowerCase();
+  return keywords.some(k => combined.includes(k));
+}
 
-  // Khusus 3 halaman: tengah = PENJELASAN
+function getPageType(pageNum, totalPages, judul, topik) {
+  const isScience = isScienceTopic(judul || '', topik || '');
+
+  // Halaman pertama selalu COVER
+  if (pageNum === 1) return { type: 'COVER', label: 'Cover' };
+
+  // ===== MODE CERITA BIASA =====
+  if (!isScience) {
+    if (pageNum === totalPages) return { type: 'PENUTUP', label: 'Penutup & Pesan Moral' };
+    if (totalPages === 3) return { type: 'KONFLIK', label: 'Konflik & Petualangan' };
+    const storyTypes = [
+      { type: 'PERKENALAN',  label: 'Perkenalan Tokoh & Latar' },
+      { type: 'KONFLIK',     label: 'Konflik & Petualangan' },
+      { type: 'KLIMAKS',     label: 'Klimaks Cerita' },
+      { type: 'RESOLUSI',    label: 'Resolusi' },
+      { type: 'KONFLIK',     label: 'Petualangan Lanjutan' },
+      { type: 'KONFLIK',     label: 'Petualangan Lanjutan 2' },
+      { type: 'KONFLIK',     label: 'Petualangan Lanjutan 3' },
+      { type: 'RESOLUSI',    label: 'Resolusi Lanjutan' },
+    ];
+    const midIndex = pageNum - 2;
+    if (midIndex < storyTypes.length) return storyTypes[midIndex];
+    return { type: 'KONFLIK', label: `Petualangan Lanjutan ${midIndex - 1}` };
+  }
+
+  // ===== MODE SAINS / MATA PELAJARAN =====
+  if (pageNum === totalPages) return { type: 'KESIMPULAN', label: 'Kesimpulan Ilmiah' };
   if (totalPages === 3) return { type: 'PENJELASAN', label: 'Penjelasan Konsep & Diagram' };
 
-  // Urutan tipe untuk halaman tengah (halaman 2 s.d. totalPages-1)
   const middleTypes = [
     { type: 'OBSERVASI',   label: 'Observasi' },
     { type: 'KONSEP',      label: 'Konsep Dasar' },
@@ -793,15 +841,16 @@ function getPageType(pageNum, totalPages) {
     { type: 'PENDALAMAN',  label: 'Pendalaman Lanjutan 3' },
     { type: 'PENDALAMAN',  label: 'Pendalaman Lanjutan 4' },
   ];
-
-  // index 0 = halaman 2, index 1 = halaman 3, dst.
   const midIndex = pageNum - 2;
   if (midIndex < middleTypes.length) return middleTypes[midIndex];
   return { type: 'PENDALAMAN', label: `Pendalaman Lanjutan ${midIndex - 2}` };
 }
 
 function getPanelCount(pageType) {
-  const counts = { COVER: 4, OBSERVASI: 5, KONSEP: 5, PENJELASAN: 5, PENDALAMAN: 5, EKSPERIMEN: 6, KESIMPULAN: 4, MATERI: 5 };
+  const counts = {
+    COVER: 4, OBSERVASI: 5, KONSEP: 5, PENJELASAN: 5, PENDALAMAN: 5, EKSPERIMEN: 6, KESIMPULAN: 4, MATERI: 5,
+    PERKENALAN: 4, KONFLIK: 5, KLIMAKS: 6, RESOLUSI: 4, PENUTUP: 4
+  };
   return counts[pageType] || 5;
 }
 
@@ -818,7 +867,8 @@ function getBadgeDecor(pageNum) {
 // ===================== PROMPT BUILDER =====================
 function buildPagePrompt(data, pageNum) {
   const { judul, topik, target, totalPages, namaSekolah, alamatSekolah, chars, ukuranGambar, styleComic } = data;
-  const { type, label } = getPageType(pageNum, totalPages);
+  const { type, label } = getPageType(pageNum, totalPages, judul, topik);
+  const isScience = isScienceTopic(judul, topik);
   const panelCount = getPanelCount(type);
   const layout = getLayout(panelCount);
   const badge = getBadgeDecor(pageNum);
@@ -839,8 +889,30 @@ function buildPagePrompt(data, pageNum) {
   let panelDescs = [], dialogs = [];
 
   if (type === 'COVER') {
-    panelDescs = [`LARGE HERO PANEL (spanning top half): Dynamic illustration of characters in school setting, excited expression, ${topik} visual theme in background, energetic composition`,`School entrance or classroom exterior with clearly visible school signboard reading "${namaSekolah}" — ${alamatSekolah} environment architecture, tropical Indonesian school setting`,`Characters looking curious at the topic theme, question marks and topic-related icons floating around them`,`Title panel: Bold large stylized text "${judul}" in comic lettering style, with topik subtitle "${topik}" below, decorative comic effects`];
-    dialogs = [`Character 1: "Hei, hari ini kita belajar tentang ${topik}!"`,`Character 2: "Wah, seru! Aku penasaran sekali!"`,`Teacher: "Mari kita mulai petualangan ilmiah kita!"`,`Narration box: "Selamat datang di komik edukasi ${judul}!"`];
+    const coverGreet = isScience ? `"Hei, hari ini kita belajar tentang ${topik}!"` : `"Hei! Petualangan seru menanti kita!"`;
+    const coverTeacher = isScience ? `"Mari kita mulai petualangan ilmiah kita!"` : `"Siap untuk petualangan yang tak terlupakan?"`;
+    const coverNarration = isScience ? `"Selamat datang di komik edukasi ${judul}!"` : `"Sebuah kisah seru tentang ${topik} dimulai…"`;
+    panelDescs = [`LARGE HERO PANEL (spanning top half): Dynamic illustration of characters in school setting, excited expression, ${topik} visual theme in background, energetic composition`,`School entrance or classroom exterior with clearly visible school signboard reading "${namaSekolah}" — ${alamatSekolah} environment architecture, tropical Indonesian school setting`,`Characters looking curious at the topic theme, question marks and topic-related icons floating around them`,`Title panel: Bold large stylized text "${judul}" in comic lettering style, with subtitle "${topik}" below, decorative comic effects`];
+    dialogs = [`Character 1: ${coverGreet}`,`Character 2: "Wah, seru! Aku tidak sabar!"`,`Teacher/Narrator: ${coverTeacher}`,`Narration box: ${coverNarration}`];
+
+  // ===== CERITA BIASA =====
+  } else if (type === 'PERKENALAN') {
+    panelDescs = [`Wide establishing shot of ${namaSekolah} school environment, characters arriving with cheerful expressions, vibrant morning atmosphere`,`Character introduction panels: each main character shown up-close with name tag or speech bubble introducing themselves`,`LARGE PANEL: All characters together in a lively scene, their distinct personalities visible — expressions, body language, props`,`Scene setting the stage for the story: hint of adventure or problem on the horizon, building anticipation`];
+    dialogs = [`Character 1: "Namaku ${chars.split('\n')[0]?.split(':')[0]?.replace('-','').trim() || 'tokoh utama'}! Aku sangat senang hari ini."`,`Character 2: "Sepertinya akan ada hal menarik yang terjadi hari ini!"`,`Narration: "Di sekolah ${namaSekolah}, sebuah kisah seru akan segera dimulai…"`,`Character 1: "Hei, lihat itu! Ada sesuatu yang tidak biasa!"`];
+  } else if (type === 'KONFLIK') {
+    panelDescs = [`Characters encounter the main problem or challenge related to ${topik} — surprised and tense expressions`,`LARGE ACTION PANEL: The conflict unfolds dramatically — vivid, dynamic illustration of the central problem or adventure moment`,`Characters strategizing or reacting — speech bubbles showing their thoughts and feelings`,`A twist or complication arises, raising the stakes of the story`,`Characters determined to solve the problem, heroic or motivated poses`];
+    dialogs = [`Character 1: "Oh tidak! Ini masalah besar!"`,`Character 2: "Kita tidak boleh menyerah begitu saja!"`,`Narration: "Tantangan terbesar dalam kisah ${judul} pun datang…"`,`Character 1: "Aku punya ide! Kita harus bekerja sama!"`,`All characters: "Ayo, kita hadapi bersama!"`];
+  } else if (type === 'KLIMAKS') {
+    panelDescs = [`FULL-WIDTH CLIMAX PANEL: The most intense, dramatic moment of the story — characters at peak action or emotion`,`Close-up of characters' determined/emotional faces, sweat and resolve visible`,`The turning point: a key decision, discovery, or act of courage that changes everything`,`Immediate aftermath of the turning point — environment and characters react dramatically`,`Moment of triumph or breakthrough — characters look stunned, relieved, or victorious`,`Celebration or emotional reaction shot — big smiles, tears of joy, or awe`];
+    dialogs = [`Character 1: "Ini saat yang menentukan!"`,`Character 2: "Aku percaya kita bisa melakukannya!"`,`Narration: "Inilah puncak dari petualangan ${judul}…"`,`Character 1: "Kita berhasil!"`,`All characters: "Ya! Kita lakukan!"`,`Narration: "Dengan keberanian dan persahabatan, semuanya mungkin!"`];
+  } else if (type === 'RESOLUSI') {
+    panelDescs = [`Characters in calm aftermath — the problem is resolved, smiles and relief on their faces`,`LARGE PANEL: Warm group scene showing the characters bonding over what they accomplished together`,`Characters reflecting on the journey — thought bubbles or dialogue about what they learned`,`A glimpse of the new normal — life improved or changed because of their adventure`];
+    dialogs = [`Character 1: "Akhirnya semua beres juga!"`,`Character 2: "Aku senang kita melewati ini bersama."`,`Narration: "Berkat kerja keras dan persahabatan, masalah pun terselesaikan."`,`Character 1: "Petualangan ini mengajarkan kita banyak hal!"`];
+  } else if (type === 'PENUTUP') {
+    panelDescs = [`LARGE WARM PANEL: All characters together in a heartfelt closing scene, school backdrop, joyful atmosphere`,`Characters sharing the lesson or moral of the story with each other or with the reader directly`,`Final message panel: characters wave to reader, motivational quote related to ${topik} and the story's theme`,`Decorative closing frame: title "${judul}" with artistic flourishes, inviting readers to reflect on the story`];
+    dialogs = [`Character 1: "Petualangan ini sungguh luar biasa!"`,`Character 2: "Pelajaran terpenting: ${topik} mengajarkan kita untuk ${topik.length > 10 ? 'selalu berani dan tidak mudah menyerah' : 'terus belajar dan berkembang'}."`,`All characters: "Sampai jumpa di petualangan berikutnya, teman-teman!"`,`Narration box: "Tamat — Terima kasih sudah membaca ${judul}!"`];
+
+  // ===== SAINS / MATA PELAJARAN =====
   } else if (type === 'OBSERVASI') {
     panelDescs = [`Characters arriving at observation location/lab, excited expressions, school setting related to ${topik}`,`Close-up of characters observing phenomenon related to ${topik}, pointing and taking notes`,`LARGE PANEL: Detailed visual of the ${topik} phenomenon being observed, highly educational illustration with labels`,`Characters discussing their observations, speech bubbles with questions`,`Characters writing in notebook, expressions of discovery`];
     dialogs = [`Character 1: "Lihat! Ada yang menarik di sini!"`,`Character 2: "Apa ya yang terjadi dengan ${topik}?"`,`Teacher: "Bagus! Amati dengan teliti dan catat semua yang kalian lihat."`,`Character 1: "Aku menemukan sesuatu yang unik!"`,`Narration: "Observasi adalah langkah pertama dalam sains!"`];
@@ -858,11 +930,11 @@ function buildPagePrompt(data, pageNum) {
     dialogs = [`Teacher: "Hari ini kita telah belajar banyak tentang ${topik}. Apa yang kalian simpulkan?"`,`Student 2: "Kesimpulannya: ${topik} sangat penting dan menarik untuk dipelajari!"`,`Student 1: "Aku jadi semakin cinta sains!"`,`All characters: "Terus semangat belajar, teman-teman! Sains itu menyenangkan!"`];
   }
 
-  while (panelDescs.length < panelCount) panelDescs.push(`Supporting educational scene related to ${topik}`);
-  while (dialogs.length < panelCount) dialogs.push(`Character: "Pembelajaran tentang ${topik} sangat bermanfaat!"`);
+  while (panelDescs.length < panelCount) panelDescs.push(isScience ? `Supporting educational scene related to ${topik}` : `Story scene advancing the narrative of ${judul}`);
+  while (dialogs.length < panelCount) dialogs.push(isScience ? `Character: "Pembelajaran tentang ${topik} sangat bermanfaat!"` : `Character: "Ini adalah petualangan yang tidak akan aku lupakan!"`);
 
-  const prevPage = pageNum > 1 ? `Continuing from Page ${pageNum-1} (${getPageType(pageNum-1, totalPages).label}) — characters maintain same design and clothing` : 'This is the first page — establish character designs and school setting';
-  const nextPage = pageNum < totalPages ? `Leading into Page ${pageNum+1} (${getPageType(pageNum+1, totalPages).label}) — maintain story continuity` : 'This is the final page — conclude the educational story';
+  const prevPage = pageNum > 1 ? `Continuing from Page ${pageNum-1} (${getPageType(pageNum-1, totalPages, judul, topik).label}) — characters maintain same design and clothing` : 'This is the first page — establish character designs and school setting';
+  const nextPage = pageNum < totalPages ? `Leading into Page ${pageNum+1} (${getPageType(pageNum+1, totalPages, judul, topik).label}) — maintain story continuity` : 'This is the final page — conclude the story';
   const panelLines = panelDescs.slice(0, panelCount).map((d, i) => `Panel ${i+1}:\n${d}`).join('\n\n');
   const dialogLines = dialogs.slice(0, panelCount).map((d, i) => `Panel ${i+1}:\n${d}`).join('\n\n');
 
@@ -893,6 +965,7 @@ TITLE
 ${isCover ? `"${judul}" — displayed as large bold comic-style title lettering\nSubtitle: "${topik}"` : 'No Title (title only on page 1)'}
 
 PAGE TYPE: ${label}
+STORY MODE: ${isScience ? "EDUCATIONAL / SCIENCE — structured academic flow with diagrams and explanations" : "NARRATIVE STORY — natural comic storytelling flow with character-driven scenes"}
 
 PANEL COUNT
 ${panelCount} panels
@@ -942,7 +1015,7 @@ VISUAL REQUIREMENTS
 • Page number fully visible and unobstructed
 • Consistent page-number badge style across all pages but unique design per page
 • Only show the digit ${pageNum} — no word "Page", "Halaman", or "Hal"
-${isLast ? '• Final page must clearly show scientific conclusions and summary of ' + topik : ''}
+${isLast ? (isScience ? '• Final page must clearly show scientific conclusions and summary of ' + topik : '• Final page must deliver a heartfelt moral/conclusion and proper story ending for ' + judul) : ''}
 
 CONTINUITY FROM PREVIOUS PAGE
 ${prevPage}
