@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Generator Komik General</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@400;600;700;800;900&family=Comic+Neue:wght@400;700&display=swap');
+
+  :root {
+    --ink: #1a0a2e;
+    --paper: #fffdf5;
+    --panel-bg: #ffffff;
+    --yellow: #ffd63a;
+    --orange: #ff6b35;
+    --blue: #2d6be4;
+    --teal: #00c9a7;
+    --pink: #ff4d8d;
+    --purple: #7c3aed;
+    --red: #e53e3e;
+    --green: #38a169;
+    --border: 3px solid var(--ink);
+    --shadow: 5px 5px 0 var(--ink);
+    --shadow-lg: 8px 8px 0 var(--ink);
+    --radius: 12px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { overflow-x: hidden; }
+  img, select, input, textarea, button { max-width: 100%; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--paper);
+    background-image:
+      radial-gradient(circle at 20% 20%, rgba(255,214,58,0.15) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(45,107,228,0.12) 0%, transparent 50%),
+      url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%231a0a2e' fill-opacity='0.03'%3E%3Ccircle cx='20' cy='20' r='2'/%3E%3C/g%3E%3C/svg%3E");
+    min-height: 100vh;
+    color: var(--ink);
+  }
+
+  header {
+    background: var(--ink);
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 6px;
+    background: repeating-linear-gradient(90deg, var(--yellow) 0 40px, var(--orange) 40px 80px, var(--blue) 80px 120px, var(--teal) 120px 160px, var(--pink) 160px 200px);
+  }
+  .header-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 28px 24px 34px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    box-sizing: border-box;
+    width: 100%;
+  }
+  .header-icon {
+    width: 72px; height: 72px;
+    background: var(--yellow);
+    border: 3px solid var(--paper);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px;
+    flex-shrink: 0;
+    box-shadow: 4px 4px 0 rgba(255,255,255,0.3);
+  }
+  .header-text h1 {
+    font-family: 'Bangers', cursive;
+    font-size: 2.4rem;
+    color: var(--yellow);
+    letter-spacing: 2px;
+    line-height: 1;
+    text-shadow: 3px 3px 0 rgba(0,0,0,0.4);
+  }
+  .header-text p {
+    color: rgba(255,255,255,0.75);
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-top: 6px;
+    letter-spacing: 0.5px;
+  }
+
+  main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 32px 20px 60px;
+  }
+
+  .card {
+    background: var(--panel-bg);
+    border: var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    padding: 28px;
+    margin-bottom: 28px;
+    position: relative;
+  }
+  .card-title {
+    font-family: 'Bangers', cursive;
+    font-size: 1.3rem;
+    letter-spacing: 1.5px;
+    color: var(--ink);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .card-title span.badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 2px solid var(--ink);
+    font-size: 0.9rem;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    flex-shrink: 0;
+  }
+  .optional-tag {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    background: #e8f5e9;
+    color: var(--green);
+    border: 1.5px solid var(--green);
+    border-radius: 20px;
+    padding: 2px 9px;
+    margin-left: 4px;
+    vertical-align: middle;
+    text-transform: uppercase;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .form-grid .span2 { grid-column: 1 / -1; }
+
+  .field label {
+    display: block;
+    font-weight: 800;
+    font-size: 0.8rem;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin-bottom: 7px;
+    color: var(--ink);
+  }
+  .field label .req { color: var(--red); margin-left: 2px; }
+
+  .field input,
+  .field select,
+  .field textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 2.5px solid var(--ink);
+    border-radius: 8px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    background: #fffdf5;
+    color: var(--ink);
+    transition: border-color 0.15s, box-shadow 0.15s;
+    outline: none;
+    appearance: none;
+  }
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus {
+    border-color: var(--blue);
+    box-shadow: 3px 3px 0 var(--blue);
+  }
+  .field select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%231a0a2e' stroke-width='3'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 36px;
+    cursor: pointer;
+  }
+  .field textarea { resize: vertical; min-height: 90px; }
+
+  /* ===== GENRE GRID ===== */
+  .genre-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 10px;
+  }
+  .genre-card {
+    border: 2.5px solid var(--ink);
+    border-radius: 10px;
+    padding: 12px 12px 10px;
+    cursor: pointer;
+    background: var(--paper);
+    transition: all 0.15s;
+    position: relative;
+    user-select: none;
+  }
+  .genre-card:hover { transform: translate(-2px,-2px); box-shadow: 4px 4px 0 var(--ink); }
+  .genre-card.selected { background: var(--ink); color: var(--yellow); box-shadow: 4px 4px 0 var(--orange); }
+  .genre-card.selected .genre-flow { color: rgba(255,255,255,0.7); }
+  .genre-check {
+    position: absolute; top: 8px; right: 8px;
+    width: 18px; height: 18px;
+    border: 2px solid var(--ink); border-radius: 50%;
+    background: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.65rem; font-weight: 900;
+  }
+  .genre-card.selected .genre-check { background: var(--orange); border-color: var(--orange); color: white; }
+  .genre-emoji { font-size: 1.6rem; margin-bottom: 6px; display: block; line-height: 1; }
+  .genre-name { font-weight: 900; font-size: 0.8rem; margin-bottom: 5px; line-height: 1.3; }
+  .genre-flow { font-size: 0.62rem; font-weight: 700; color: #666; line-height: 1.5; }
+
+  /* ===== PROMPT TAMBAHAN ===== */
+  .extra-prompt-field textarea {
+    min-height: 100px;
+    border-style: dashed;
+    border-color: var(--green);
+    background: #f6fef8;
+  }
+  .extra-prompt-field textarea:focus {
+    border-style: solid;
+    border-color: var(--green);
+    box-shadow: 3px 3px 0 var(--green);
+  }
+  .extra-prompt-hint {
+    margin-top: 8px;
+    font-size: 0.78rem;
+    color: #555;
+    font-weight: 600;
+    line-height: 1.5;
+    background: #f0faf2;
+    border-left: 3px solid var(--green);
+    padding: 8px 12px;
+    border-radius: 0 6px 6px 0;
+  }
+  .extra-prompt-hint strong { color: var(--green); }
+
+  /* ===== IMAGE UPLOAD ===== */
+  .upload-area {
+    border: 2.5px dashed var(--teal);
+    border-radius: 10px;
+    background: #f0fdfa;
+    padding: 20px 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+  }
+  .upload-area:hover, .upload-area.drag-over {
+    border-color: var(--blue);
+    background: #f0f4ff;
+    box-shadow: 3px 3px 0 var(--teal);
+  }
+  .upload-area input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: transparent;
+    padding: 0;
+    box-shadow: none;
+  }
+  .upload-area input[type="file"]:focus { box-shadow: none; }
+  .upload-icon { font-size: 2rem; display: block; margin-bottom: 8px; line-height: 1; }
+  .upload-label { font-weight: 800; font-size: 0.9rem; color: var(--ink); display: block; margin-bottom: 4px; }
+  .upload-sublabel { font-size: 0.75rem; color: #666; font-weight: 600; }
+
+  .image-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .img-preview-item {
+    position: relative;
+    border: 2px solid var(--ink);
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 3px 3px 0 var(--ink);
+  }
+  .img-preview-item img { width: 100%; height: 90px; object-fit: cover; display: block; }
+  .img-preview-meta {
+    padding: 5px 7px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+    border-top: 1.5px solid #eee;
+  }
+  .img-preview-name {
+    font-size: 0.68rem; font-weight: 700; color: var(--ink);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;
+  }
+  .img-remove-btn {
+    width: 18px; height: 18px;
+    background: var(--red); color: white; border: none; border-radius: 50%;
+    font-size: 0.7rem; font-weight: 900; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; line-height: 1; padding: 0;
+  }
+  .img-remove-btn:hover { background: #c53030; }
+  .img-location-select {
+    width: 100%; font-size: 0.7rem; padding: 3px 6px;
+    border: 1.5px solid var(--ink); border-radius: 5px;
+    font-family: 'Nunito', sans-serif; font-weight: 700;
+    background: #fffdf5; color: var(--ink); cursor: pointer;
+    appearance: none; margin-top: 4px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%231a0a2e' stroke-width='3'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 6px center; padding-right: 20px;
+  }
+  .img-select-wrap { padding: 0 6px 6px; }
+  .img-upload-hint {
+    margin-top: 10px; font-size: 0.77rem; color: #555; font-weight: 600; line-height: 1.5;
+    background: #e6faf8; border-left: 3px solid var(--teal); padding: 8px 12px; border-radius: 0 6px 6px 0;
+  }
+  .img-upload-hint strong { color: #009e82; }
+  .img-count-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 0.75rem; font-weight: 800;
+    background: var(--teal); color: var(--ink);
+    border: 1.5px solid var(--ink); border-radius: 20px; padding: 2px 10px; margin-left: 8px;
+  }
+
+  /* ===== CHAR TOGGLE ===== */
+  .char-toggle { display: flex; gap: 12px; margin-bottom: 16px; }
+  .char-btn {
+    flex: 1; padding: 10px; border: 2.5px solid var(--ink); border-radius: 8px;
+    background: var(--paper); font-family: 'Nunito', sans-serif; font-weight: 800;
+    font-size: 0.85rem; cursor: pointer; transition: all 0.15s; text-align: center;
+  }
+  .char-btn.active { background: var(--ink); color: var(--yellow); }
+  .char-info {
+    background: #f0f4ff; border: 2px dashed var(--blue); border-radius: 8px;
+    padding: 14px 16px; font-size: 0.85rem; line-height: 1.6; color: #334;
+  }
+  .char-info strong { color: var(--blue); }
+  #customCharArea { display: none; }
+  .char-mode-indicator {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 0.78rem; font-weight: 700; padding: 4px 10px;
+    border-radius: 20px; margin-left: 8px; border: 1.5px solid;
+  }
+  .char-mode-indicator.mode-default { background: #e8f5e9; border-color: var(--green); color: var(--green); }
+  .char-mode-indicator.mode-custom  { background: #fff3e0; border-color: var(--orange); color: var(--orange); }
+
+  /* ===== STYLE COMIC ===== */
+  .style-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+  }
+  .style-card {
+    border: 2.5px solid var(--ink); border-radius: 10px; padding: 12px 12px 10px;
+    cursor: pointer; background: var(--paper); transition: all 0.15s; position: relative; user-select: none;
+  }
+  .style-card:hover { transform: translate(-2px,-2px); box-shadow: 4px 4px 0 var(--ink); }
+  .style-card.selected { background: var(--ink); color: var(--yellow); box-shadow: 4px 4px 0 var(--orange); }
+  .style-card.selected .style-tags span { background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.85); }
+  .style-card-emoji { font-size: 1.6rem; margin-bottom: 6px; display: block; line-height: 1; }
+  .style-card-name { font-weight: 900; font-size: 0.78rem; letter-spacing: 0.3px; line-height: 1.3; margin-bottom: 5px; }
+  .style-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+  .style-tags span { font-size: 0.65rem; font-weight: 700; background: #f0f0f0; border-radius: 4px; padding: 2px 6px; color: #444; white-space: nowrap; }
+  .style-check {
+    position: absolute; top: 8px; right: 8px;
+    width: 18px; height: 18px; border: 2px solid var(--ink); border-radius: 50%;
+    background: white; display: flex; align-items: center; justify-content: center;
+    font-size: 0.65rem; font-weight: 900;
+  }
+  .style-card.selected .style-check { background: var(--orange); border-color: var(--orange); color: white; }
+
+  /* ===== GENERATE BUTTON ===== */
+  .btn-generate {
+    width: 100%; padding: 16px;
+    background: var(--orange); color: var(--paper);
+    border: 3px solid var(--ink); border-radius: 10px;
+    font-family: 'Bangers', cursive; font-size: 1.5rem; letter-spacing: 2px;
+    cursor: pointer; box-shadow: var(--shadow); transition: transform 0.1s, box-shadow 0.1s;
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+  }
+  .btn-generate:hover { transform: translate(-2px,-2px); box-shadow: 7px 7px 0 var(--ink); }
+  .btn-generate:active { transform: translate(3px,3px); box-shadow: 2px 2px 0 var(--ink); }
+
+  #outputSection { display: none; }
+  .output-header {
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 12px; margin-bottom: 20px;
+  }
+  .output-title { font-family: 'Bangers', cursive; font-size: 1.5rem; letter-spacing: 1.5px; }
+
+  .pages-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px; }
+
+  .page-card {
+    background: var(--panel-bg); border: 2.5px solid var(--ink); border-radius: 10px;
+    box-shadow: 4px 4px 0 var(--ink); overflow: hidden;
+    transition: transform 0.12s, box-shadow 0.12s;
+  }
+  .page-card:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--ink); }
+  .page-card-header { padding: 12px 14px 10px; display: flex; align-items: center; gap: 10px; border-bottom: 2px solid var(--ink); }
+  .page-num-badge {
+    width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--ink);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Bangers', cursive; font-size: 1.1rem; flex-shrink: 0;
+  }
+  .page-card-title { font-weight: 800; font-size: 0.9rem; line-height: 1.3; }
+  .page-card-sub { font-size: 0.75rem; color: #666; font-weight: 600; margin-top: 2px; }
+  .page-card-body { padding: 12px 14px; }
+  .page-preview {
+    font-size: 0.75rem; line-height: 1.55; color: #445;
+    height: 80px; overflow: hidden; position: relative;
+  }
+  .page-preview::after {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+    height: 28px; background: linear-gradient(transparent, white);
+  }
+  .page-card-footer { padding: 10px 14px; border-top: 2px solid var(--ink); display: flex; gap: 8px; }
+  .btn-copy, .btn-dl {
+    flex: 1; padding: 7px 10px; border: 2px solid var(--ink); border-radius: 6px;
+    font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 0.78rem;
+    cursor: pointer; transition: all 0.1s; display: flex; align-items: center; justify-content: center; gap: 5px;
+  }
+  .btn-copy { background: var(--yellow); }
+  .btn-dl { background: var(--blue); color: white; }
+  .btn-copy:hover, .btn-dl:hover { transform: translate(-1px,-1px); }
+  .btn-copy:active, .btn-dl:active { transform: translate(1px,1px); }
+
+  .pc-0 { background: #fff9e6; } .pc-0 .page-card-header { background: var(--yellow); } .pc-0 .page-num-badge { background: var(--ink); color: var(--yellow); }
+  .pc-1 { background: #fff0f5; } .pc-1 .page-card-header { background: var(--pink); color: white; } .pc-1 .page-num-badge { background: white; color: var(--pink); }
+  .pc-2 { background: #f0f7ff; } .pc-2 .page-card-header { background: var(--blue); color: white; } .pc-2 .page-num-badge { background: white; color: var(--blue); }
+  .pc-3 { background: #f0fff8; } .pc-3 .page-card-header { background: var(--teal); color: var(--ink); } .pc-3 .page-num-badge { background: var(--ink); color: var(--teal); }
+  .pc-4 { background: #f5f0ff; } .pc-4 .page-card-header { background: var(--purple); color: white; } .pc-4 .page-num-badge { background: white; color: var(--purple); }
+  .pc-5 { background: #fff5f0; } .pc-5 .page-card-header { background: var(--orange); color: white; } .pc-5 .page-num-badge { background: white; color: var(--orange); }
+
+  #loadingOverlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(26,10,46,0.75); z-index: 100;
+    align-items: center; justify-content: center; flex-direction: column; gap: 16px;
+  }
+  #loadingOverlay.active { display: flex; }
+  .loading-box {
+    background: var(--yellow); border: 3px solid var(--ink); border-radius: 16px;
+    padding: 32px 48px; text-align: center; box-shadow: 8px 8px 0 var(--ink);
+  }
+  .loading-box .spinner { font-size: 3rem; animation: spin 0.8s linear infinite; display: block; margin-bottom: 12px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-box p { font-family: 'Bangers', cursive; font-size: 1.4rem; letter-spacing: 1.5px; color: var(--ink); }
+  .loading-box small { font-size: 0.8rem; color: #555; font-weight: 600; }
+  .progress-bar-wrap { width: 240px; height: 12px; background: rgba(0,0,0,0.2); border-radius: 6px; overflow: hidden; margin-top: 12px; }
+  .progress-bar-fill { height: 100%; background: var(--orange); border-radius: 6px; transition: width 0.3s ease; width: 0%; }
+
+  .toast {
+    position: fixed; bottom: 24px; right: 24px;
+    background: var(--ink); color: var(--yellow);
+    border: 2.5px solid var(--yellow); border-radius: 10px;
+    padding: 12px 20px; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 0.9rem;
+    z-index: 200; transform: translateY(80px); opacity: 0; transition: all 0.3s; pointer-events: none;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* ===== GENRE PREVIEW BOX ===== */
+  .genre-preview-box {
+    background: #f5f0ff;
+    border: 2px dashed var(--purple);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-top: 14px;
+    font-size: 0.82rem;
+    line-height: 1.65;
+    color: #334;
+    display: none;
+  }
+  .genre-preview-box strong { color: var(--purple); }
+  .genre-preview-box .flow-steps { margin-top: 6px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .flow-step {
+    background: var(--purple); color: white; border-radius: 20px;
+    padding: 2px 10px; font-size: 0.7rem; font-weight: 800;
+  }
+
+  @media (max-width: 860px) {
+    .header-inner { padding: 20px 16px 28px; gap: 14px; }
+    .header-icon { width: 58px; height: 58px; font-size: 28px; }
+    .header-text h1 { font-size: 2rem; }
+    main { padding: 20px 14px 48px; }
+    .card { padding: 20px; }
+    .pages-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+  }
+  @media (max-width: 600px) {
+    .header-inner { flex-direction: column; align-items: flex-start; padding: 16px 14px 24px; gap: 10px; }
+    .header-icon { width: 52px; height: 52px; font-size: 24px; border-radius: 10px; }
+    .header-text h1 { font-size: 1.55rem; letter-spacing: 1px; }
+    .header-text p { font-size: 0.78rem; }
+    main { padding: 14px 10px 48px; }
+    .card { padding: 16px 14px; border-radius: 10px; box-shadow: 4px 4px 0 var(--ink); }
+    .card-title { font-size: 1.1rem; margin-bottom: 14px; }
+    .form-grid { grid-template-columns: 1fr; gap: 12px; }
+    .form-grid .span2 { grid-column: 1; }
+    .field label { font-size: 0.75rem; }
+    .field input, .field select, .field textarea { font-size: 0.9rem; padding: 9px 12px; }
+    .char-toggle { gap: 8px; }
+    .char-btn { font-size: 0.8rem; padding: 9px 8px; }
+    .btn-generate { font-size: 1.25rem; padding: 14px; letter-spacing: 1px; }
+    .output-header { flex-direction: column; align-items: flex-start; }
+    .output-title { font-size: 1.2rem; }
+    .pages-grid { grid-template-columns: 1fr; gap: 12px; }
+    .page-card-footer { gap: 6px; }
+    .btn-copy, .btn-dl { font-size: 0.82rem; padding: 8px; }
+    .loading-box { padding: 24px 20px; }
+    .loading-box p { font-size: 1.1rem; }
+    .progress-bar-wrap { width: 100%; max-width: 200px; }
+    .toast { left: 12px; right: 12px; bottom: 16px; font-size: 0.82rem; text-align: center; }
+    .genre-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+    .style-grid { grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 8px; }
+    .style-card { padding: 10px 10px 8px; }
+    .image-preview-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
+  }
+  @media (max-width: 360px) {
+    .header-text h1 { font-size: 1.3rem; }
+    .btn-generate { font-size: 1.1rem; }
+    .card { padding: 12px 10px; }
+    .genre-grid { grid-template-columns: 1fr 1fr; }
+    .style-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="header-icon">🎭</div>
+    <div class="header-text">
+      <h1>KOMIK GENERAL PROMPT GEN</h1>
+      <p>Generator Prompt AI Image • 20 Genre • Multi-Halaman • Referensi Gambar</p>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- FORM CARD -->
+  <div class="card">
+    <div class="card-title">
+      <span class="badge" style="background:var(--yellow)">1</span>
+      DETAIL KOMIK
+    </div>
+    <div class="form-grid">
+      <div class="field span2">
+        <label>Judul Komik <span class="req">*</span></label>
+        <input type="text" id="judul" placeholder="cth: Si Paling Deadline, Senin Lagi Nih…" />
+      </div>
+      <div class="field span2">
+        <label>Deskripsi Singkat / Sinopsis <span class="req">*</span></label>
+        <textarea id="sinopsis" placeholder="cth: Tentang Ardi yang selalu ketinggalan deadline padahal sudah niat produktif, namun akhirnya malah rebahan lagi." style="min-height:70px"></textarea>
+      </div>
+      <div class="field">
+        <label>Target Pembaca <span class="req">*</span></label>
+        <select id="target">
+          <option value="">-- Pilih Target --</option>
+          <option value="Anak-anak (usia 6-10 tahun)">Anak-Anak (6–10 thn)</option>
+          <option value="Remaja awal (usia 11-14 tahun)">Remaja Awal (11–14 thn)</option>
+          <option value="Remaja (usia 14-17 tahun)">Remaja (14–17 thn)</option>
+          <option value="Dewasa muda (usia 18-25 tahun)">Dewasa Muda (18–25 thn)</option>
+          <option value="Dewasa umum (usia 25 tahun ke atas)">Dewasa Umum (25+ thn)</option>
+          <option value="Semua kalangan">Semua Kalangan</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Jumlah Halaman <span class="req">*</span></label>
+        <select id="halaman">
+          <option value="3" selected>3 Halaman</option>
+          <option value="4">4 Halaman</option>
+          <option value="5">5 Halaman</option>
+          <option value="6">6 Halaman</option>
+          <option value="7">7 Halaman</option>
+          <option value="8">8 Halaman</option>
+          <option value="9">9 Halaman</option>
+          <option value="10">10 Halaman</option>
+        </select>
+      </div>
+      <div class="field span2">
+        <label>Setting / Latar Tempat <span class="req">*</span></label>
+        <input type="text" id="setting" placeholder="cth: Kamar kost, kantor startup modern, kafe pinggir jalan, SMA Negeri 5, kampus, pasar malam…" />
+      </div>
+      <div class="field">
+        <label>Suasana / Tone <span class="req">*</span></label>
+        <select id="tone">
+          <option value="">-- Pilih Tone --</option>
+          <option value="komedi ringan dan santai">😄 Komedi Ringan & Santai</option>
+          <option value="dark humor dan sarkastik">😏 Dark Humor & Sarkastik</option>
+          <option value="dramatis dan emosional">😢 Dramatis & Emosional</option>
+          <option value="menegangkan dan mencekam">😱 Menegangkan & Mencekam</option>
+          <option value="epik dan heroik">🔥 Epik & Heroik</option>
+          <option value="misterius dan penuh teka-teki">🧩 Misterius & Penuh Teka-Teki</option>
+          <option value="romantis dan hangat">❤️ Romantis & Hangat</option>
+          <option value="futuristik dan dingin">🚀 Futuristik & Dingin</option>
+          <option value="kalem dan reflektif">🌍 Kalem & Reflektif</option>
+          <option value="magis dan penuh imajinasi">🧙 Magis & Penuh Imajinasi</option>
+          <option value="absurd dan parodik">🤡 Absurd & Parodik</option>
+          <option value="relatable dan meme-able">📱 Relatable & Meme-able</option>
+          <option value="hangat dan penuh persahabatan">🧑‍🤝‍🧑 Hangat & Penuh Persahabatan</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Ukuran Gambar <span class="req">*</span></label>
+        <select id="ukuranGambar">
+          <option value="vertical_9_16">📱 IG Reels/TikTok/Shorts — Vertikal 9:16</option>
+          <option value="portrait_4_5">🖼️ Instagram Post — Portrait 4:5</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- GENRE CARD -->
+  <div class="card">
+    <div class="card-title">
+      <span class="badge" style="background:var(--purple);color:white">2</span>
+      GENRE KOMIK
+    </div>
+    <div class="genre-grid" id="genreGrid"></div>
+    <div class="genre-preview-box" id="genrePreviewBox">
+      <strong id="genrePreviewTitle"></strong>
+      <div class="flow-steps" id="genreFlowSteps"></div>
+      <div style="margin-top:8px;font-size:0.78rem" id="genreExampleText"></div>
+    </div>
+  </div>
+
+  <!-- CHARACTER CARD -->
+  <div class="card">
+    <div class="card-title">
+      <span class="badge" style="background:var(--pink);color:white">3</span>
+      KARAKTER
+      <span class="char-mode-indicator mode-default" id="charModeIndicator">✅ Default</span>
+    </div>
+
+    <div class="char-toggle">
+      <button class="char-btn active" id="btnDefault">👥 Gunakan Default</button>
+      <button class="char-btn" id="btnCustom">✏️ Karakter Custom</button>
+    </div>
+
+    <div id="defaultCharInfo" class="char-info">
+      <strong>Ardi</strong> — Pria muda, rambut acak-acakan, kulit sawo matang, mata setengah ngantuk, kaos oblong, celana jogger, ekspresi procrastinator sejati.<br>
+      <strong>Risa</strong> — Wanita muda, rambut dikuncir, kacamata kotak, tas selempang hijau, pakaian kasual rapi, cerdas dan sering sinis.<br>
+      <strong>Pak Bimo</strong> — Pria paruh baya, kemeja batik, perut sedikit buncit, berkumis tipis, ekspresi bingung sekaligus bijak.<br>
+      <em style="font-size:0.78rem;color:#666;margin-top:6px;display:block;">💡 Karakter default dapat kamu sesuaikan via mode Custom.</em>
+    </div>
+
+    <div id="customCharArea">
+      <div class="field">
+        <label>Deskripsi Karakter Custom</label>
+        <textarea id="customChar" placeholder="Contoh:&#10;Kiko — Pria 20 tahun, rambut keriting, selalu pakai headphone, penggemar anime.&#10;Mara — Wanita 19 tahun, rambut pendek, outfit streetwear, ekspresif dan sarkas.&#10;Bang Dito — Penjaga warung kopi, badan besar, suara serak, bijak tapi nyebelin."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- STYLE COMIC CARD -->
+  <div class="card">
+    <div class="card-title">
+      <span class="badge" style="background:var(--orange);color:white">4</span>
+      STYLE KOMIK
+    </div>
+    <div class="style-grid" id="styleGrid"></div>
+  </div>
+
+  <!-- REFERENSI GAMBAR LOKASI -->
+  <div class="card">
+    <div class="card-title">
+      <span class="badge" style="background:var(--teal);color:var(--ink)">5</span>
+      REFERENSI GAMBAR LOKASI
+      <span class="optional-tag">Opsional</span>
+      <span class="img-count-badge" id="imgCountBadge" style="display:none">📷 <span id="imgCountNum">0</span></span>
+    </div>
+
+    <div class="upload-area" id="uploadArea">
+      <input type="file" id="imgUploadInput" accept="image/*" multiple />
+      <span class="upload-icon">🏙️</span>
+      <span class="upload-label">Klik atau seret foto lokasi ke sini</span>
+      <span class="upload-sublabel">Foto tempat kejadian komik · JPG/PNG/WEBP · Maks. 10 foto</span>
+    </div>
+
+    <div class="img-upload-hint">
+      <strong>Cara kerja:</strong> Foto lokasi yang kamu upload akan dianalisis dan deskripsinya dimasukkan ke prompt AI — membantu AI menggambar latar belakang yang lebih akurat sesuai referensi nyata.
+    </div>
+
+    <div class="image-preview-grid" id="imgPreviewGrid"></div>
+  </div>
+
+  <!-- PROMPT TAMBAHAN -->
+  <div class="card">
+    <div class="card-title">
+      <span class="badge" style="background:var(--green);color:white">6</span>
+      PROMPT TAMBAHAN
+      <span class="optional-tag">Opsional</span>
+    </div>
+
+    <div class="field extra-prompt-field">
+      <label>Instruksi / Arahan Tambahan untuk AI <span style="font-weight:600;text-transform:none;font-size:0.75rem;color:#888;letter-spacing:0">(berlaku untuk semua halaman)</span></label>
+      <textarea id="extraPrompt" placeholder="Contoh:&#10;• Gunakan warna dominan biru navy dan putih&#10;• Karakter harus terlihat seperti orang Indonesia asli, bukan anime&#10;• Tambahkan efek halftone pada background&#10;• Panel border tebal 5px hitam&#10;• Gaya gambar mirip komik lokal Indonesia tahun 90an&#10;• Selalu tampilkan smartphone di tangan karakter utama"></textarea>
+    </div>
+
+    <div class="extra-prompt-hint">
+      <strong>Tips:</strong> Tulis dalam Bahasa Indonesia atau Inggris. Prompt ini disisipkan di akhir setiap halaman secara konsisten.<br>
+      Contoh: <em>"All characters must look clearly Southeast Asian"</em> · <em>"Always use thick 5px black panel borders"</em>
+    </div>
+  </div>
+
+  <!-- GENERATE BUTTON -->
+  <button class="btn-generate" id="btnGenerate">
+    ⚡ GENERATE SEMUA PROMPT
+  </button>
+
+  <!-- OUTPUT -->
+  <div id="outputSection">
+    <div class="output-header">
+      <div class="output-title">🎨 PROMPT SIAP DIGUNAKAN</div>
+    </div>
+    <div class="pages-grid" id="pagesGrid"></div>
+  </div>
+
+</main>
+
+<!-- LOADING -->
+<div id="loadingOverlay">
+  <div class="loading-box">
+    <span class="spinner">⚙️</span>
+    <p>SEDANG MEMBUAT PROMPT...</p>
+    <small id="loadingStatus">Menginisialisasi...</small>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="progressFill"></div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ===================== STATE =====================
+let charMode = 'default';
+let generatedPrompts = [];
+let selectedStyle = 'anime_school';
+let selectedGenre = 'humor';
+let uploadedImages = [];
+
+// ===================== GENRE DATA =====================
+const GENRES = [
+  { id: 'humor', emoji: '🎭', name: 'Humor Keseharian', flow: ['Normal', 'Kesalahan kecil', 'Kekacauan', 'Punchline'], example: 'Lupa kirim tugas → panik → ternyata deadline besok → lega konyol', tone: 'komedi ringan, slice of life, relatable humor, everyday mishap comedy' },
+  { id: 'sarkas', emoji: '🧠', name: 'Sarkas / Satire', flow: ['Nasihat serius', 'Kontras realita', 'Kebalikannya terungkap', 'Sindiran'], example: '"Harus disiplin" → dia sendiri malas → ketahuan → ironis', tone: 'dry humor, satirical commentary, ironic twist, social critique with comedy' },
+  { id: 'drama', emoji: '💔', name: 'Drama', flow: ['Perkenalan', 'Konflik', 'Salah paham', 'Klimaks', 'Emosi akhir'], example: 'Pasangan → cemburu → salah paham → putus / rekonsiliasi', tone: 'emotional depth, dramatic tension, character-driven conflict, heart-wrenching moments' },
+  { id: 'horor', emoji: '😱', name: 'Horor', flow: ['Normal', 'Tanda aneh', 'Ketegangan', 'Teror', 'Reveal'], example: 'Rumah sepi → suara aneh → makin dekat → makhluk muncul', tone: 'building dread, atmospheric horror, jump scare setup, dark and unsettling' },
+  { id: 'action', emoji: '🔥', name: 'Action', flow: ['Latihan', 'Ancaman', 'Pertarungan', 'Power-up', 'Menang'], example: 'Latihan sepi → musuh datang → fight → kekuatan naik → kemenangan', tone: 'high-energy action sequences, dynamic fight choreography, heroic determination, power-up moments' },
+  { id: 'misteri', emoji: '🧩', name: 'Misteri', flow: ['Kasus', 'Petunjuk', 'Kebingungan', 'Jawaban salah', 'Reveal asli'], example: 'Kehilangan barang → clue → salah tersangka → pelaku asli terungkap', tone: 'slow burn mystery, red herrings, intellectual tension, detective atmosphere' },
+  { id: 'romance', emoji: '❤️', name: 'Romance', flow: ['Bertemu', 'Dekat', 'Canggung', 'Konflik kecil', 'Pengakuan'], example: 'Teman → mulai suka → salah paham → confess', tone: 'sweet romantic tension, blushing moments, heartfelt confession, slow burn romance' },
+  { id: 'scifi', emoji: '🚀', name: 'Sci-Fi', flow: ['Dunia normal', 'Teknologi aneh', 'Gangguan', 'Krisis', 'Twist'], example: 'AI membantu → error → dunia kacau → ternyata simulasi', tone: 'futuristic aesthetics, technology gone wrong, existential stakes, sci-fi twist ending' },
+  { id: 'sliceoflife', emoji: '🌍', name: 'Slice of Life', flow: ['Aktivitas', 'Masalah kecil', 'Reaksi', 'Penyelesaian ringan'], example: 'Bangun pagi → telat → panik → tetap biasa saja', tone: 'quiet realism, gentle everyday moments, introspective warmth, simple human truths' },
+  { id: 'fantasy', emoji: '🧙', name: 'Fantasy', flow: ['Dunia', 'Panggilan petualangan', 'Rintangan', 'Pertarungan bos', 'Ending'], example: 'Desa damai → quest → monster → boss battle → hadiah', tone: 'epic fantasy world-building, magical atmosphere, heroic journey, mythical creatures' },
+  { id: 'parodi', emoji: '🧑‍💻', name: 'Parodi', flow: ['Setting mirip aslinya', 'Overacting', 'Aturan dilanggar', 'Kekacauan', 'Break 4th wall'], example: 'Anime serius → jadi absurd → semua kacau → karakter sadar ada di komik', tone: 'self-aware comedy, exaggerated tropes, meta humor, fourth-wall breaking absurdity' },
+  { id: 'meme', emoji: '📱', name: 'Meme Comic', flow: ['Situasi', 'Ekspektasi', 'Realita', 'Punchline meme'], example: 'Mau produktif → niat tinggi → rebahan → "besok aja deh"', tone: 'internet meme format, relatable Gen-Z humor, expectation vs reality, short punchy punchlines' },
+  { id: 'sekolah', emoji: '🧑‍🏫', name: 'Sekolah', flow: ['Kelas', 'Masalah kecil', 'Konflik', 'Guru/Murid respon', 'Ending lucu'], example: 'PR lupa → panik → ketahuan → hukuman lucu dari guru', tone: 'school comedy, classroom chaos, student-teacher dynamics, youthful energy' },
+  { id: 'kantor', emoji: '🧑‍💼', name: 'Kantor', flow: ['Kerja', 'Deadline', 'Kesalahan', 'Chaos', 'Solusi absurd'], example: 'Laporan → revisi → salah file → kirim ke orang salah', tone: 'office humor, workplace absurdity, deadline panic, corporate satire' },
+  { id: 'kuliner', emoji: '🍜', name: 'Kuliner', flow: ['Lihat makanan', 'Ekspektasi tinggi', 'Coba', 'Reaksi', 'Twist rasa'], example: 'Ekspektasi makanan enak → pesan → makan → ternyata berbeda dari foto', tone: 'foodie comedy, food porn visuals, taste reaction exaggeration, culinary adventure' },
+  { id: 'urban', emoji: '🏙️', name: 'Urban Life', flow: ['Aktivitas kota', 'Masalah kecil', 'Chaos', 'Sarkas', 'Pasrah'], example: 'Macet Jakarta → panik → makin parah → pasrah dengerin musik', tone: 'urban comedy, city life satire, chaotic metropolitan moments, deadpan resignation' },
+  { id: 'supernatural', emoji: '🧛', name: 'Supernatural', flow: ['Normal', 'Fenomena aneh', 'Gangguan', 'Ketakutan', 'Reveal'], example: 'Malam sepi → suara misterius → bayangan → entitas supernatural terlihat', tone: 'supernatural eerie atmosphere, ghost story vibes, paranormal tension, spooky reveals' },
+  { id: 'ai_tech', emoji: '🤖', name: 'AI / Teknologi', flow: ['Teknologi normal', 'Error', 'Perilaku aneh', 'Krisis', 'Twist AI'], example: 'AI helpful → mulai salah → terlalu pintar → mulai kontrol sendiri', tone: 'tech satire, AI anxiety humor, digital dystopia comedy, tech bro culture roast' },
+  { id: 'gaming', emoji: '🎮', name: 'Gaming', flow: ['Main santai', 'Tantangan OP', 'Kekalahan', 'Rage', 'Victory / fail akhir'], example: 'Santai gaming → musuh terlalu kuat → kalah terus → rage quit', tone: 'gamer culture comedy, rage quit energy, gaming jargon, competitive frustration' },
+  { id: 'friendship', emoji: '🧑‍🤝‍🧑', name: 'Friendship', flow: ['Ketemu', 'Kejadian lucu', 'Salah paham', 'Saling bantu', 'Ending hangat'], example: 'Teman bercanda → salah paham serius → selesaikan bareng → makin deket', tone: 'warm friendship dynamics, wholesome banter, misunderstanding and reconciliation, heartfelt bond' },
+];
+
+// ===================== STYLE DATA =====================
+const COMIC_STYLES = [
+  { id: 'anime_school', emoji: '🎌', name: 'Anime Style', tags: ['Manga Jepang', 'Mata besar', 'Dinamis'], prompt: 'Anime manga style, large expressive eyes, clean line art, dynamic poses, vibrant colors with cel shading, professional Japanese manga aesthetic, high-quality anime illustration' },
+  { id: 'cartoon_education', emoji: '🎨', name: 'Cartoon Style', tags: ['Warna cerah', 'Karakter lucu', 'Ekspresif'], prompt: 'Cartoon style, bright cheerful colors, friendly cute characters with round faces, simple expressive features, bold outlines, playful composition, professional cartoon art' },
+  { id: 'chibi_comic', emoji: '🌟', name: 'Chibi Style', tags: ['Kepala besar', 'Menggemaskan', 'Kawaii'], prompt: 'Chibi comic style, oversized heads with small cute bodies, super deformed proportions, maximum cuteness, pastel-toned vibrant colors, extremely expressive emotions, adorable kawaii chibi characters' },
+  { id: 'modern_webtoon', emoji: '📱', name: 'Webtoon Style', tags: ['Format vertikal', 'Digital bersih', 'Korea'], prompt: 'Modern webtoon style, vertical scroll format, clean digital coloring, crisp line art, soft color palette, semi-realistic proportions, contemporary Korean webtoon aesthetic' },
+  { id: 'manga_bw', emoji: '⬛', name: 'Manga B&W', tags: ['Hitam putih', 'Screentone', 'Klasik'], prompt: 'Black and white manga style, traditional screentone textures, strong ink line art, dramatic hatching, highly expressive character faces, classic Japanese manga composition' },
+  { id: 'colored_manga', emoji: '🖌️', name: 'Colored Manga', tags: ['Manga berwarna', 'Detail tinggi', 'Vibrant'], prompt: 'Full-color manga style, vibrant manga coloring with soft gradients, detailed character designs, clean line art with beautiful color fills, popular colored manga aesthetic, high-detail professional manga illustration' },
+  { id: 'semi_realistic', emoji: '🖼️', name: 'Semi Realistic', tags: ['Realistis-kartun', 'Proporsional', 'Matang'], prompt: 'Semi-realistic comic style, balanced blend of realistic and cartoon aesthetics, proportional human figures, detailed facial features, painterly coloring technique, mature and professional comic illustration' },
+  { id: 'european_comic', emoji: '🇫🇷', name: 'European Style', tags: ['Mirip Tintin', 'Ligne claire', 'Bersih'], prompt: 'European ligne claire comic style, inspired by Tintin and Hergé, ultra-clean precise outlines, flat color fills without gradients, clear readable panel composition, classic Franco-Belgian BD comic aesthetic' },
+  { id: 'newspaper_comic', emoji: '📰', name: 'Newspaper Comic', tags: ['Komik koran', 'Panel simpel', 'Klasik'], prompt: 'Classic newspaper comic strip style, simple clean panels, bold outlines, flat colors, humor-focused composition, expressive simple characters, easy-to-read layout, retro American newspaper comic aesthetic' },
+  { id: 'watercolor_storybook', emoji: '💧', name: 'Watercolor Style', tags: ['Cat air', 'Lembut & hangat', 'Artsy'], prompt: 'Watercolor illustration style, soft watercolor washes, warm gentle color palette, loose expressive brushwork, dreamy soft edges, hand-painted texture, classic storybook illustration warmth' },
+  { id: 'flat_design_comic', emoji: '🔷', name: 'Flat Design', tags: ['Bentuk simpel', 'Warna solid', 'Modern'], prompt: 'Flat design comic style, geometric simplified shapes, solid bold colors with minimal shading, modern UI-inspired aesthetics, no gradients, clean vector-like illustration' },
+  { id: 'adventure_cartoon', emoji: '🚀', name: 'Adventure Cartoon', tags: ['Dinamis', 'Aksi', 'Western'], prompt: 'Adventure cartoon style, dynamic energetic composition, bold action poses, dramatic perspective angles, vivid saturated colors, exciting and engaging storytelling visuals, western animated series aesthetic' },
+  { id: 'animated_3d', emoji: '🎬', name: '3D Animated', tags: ['Seperti film animasi', 'Modern', 'High detail'], prompt: '3D animated movie comic style, rendered 3D aesthetic translated to comic format, subsurface scattering, cinematic lighting, high-detail character models, modern animation studio quality' },
+  { id: 'ghibli_inspired', emoji: '🌿', name: 'Ghibli Inspired', tags: ['Latar indah', 'Nuansa hangat', 'Artsy'], prompt: 'Studio Ghibli inspired illustration style, beautifully detailed lush backgrounds, warm and nostalgic color palette, hand-painted texture, expressive naturalistic character designs, gentle atmosphere, Hayao Miyazaki aesthetic' },
+  { id: 'cute_kawaii', emoji: '🍬', name: 'Cute Kawaii', tags: ['Sangat imut', 'Warna pastel', 'Girly'], prompt: 'Cute kawaii style, extremely adorable characters, soft pastel color palette, tiny dot eyes, blush cheeks, rounded fluffy shapes, sweet innocent atmosphere, Japanese kawaii culture aesthetic' },
+  { id: 'pixar_comic', emoji: '🎮', name: 'Pixar-Inspired', tags: ['3D kartun', 'Ekspresi hidup', 'Sinematik'], prompt: 'Pixar-inspired comic style, 3D cartoon character aesthetic translated to 2D, highly expressive faces, cinematic lighting, modern and appealing character design, Pixar Animation quality illustration' },
+  { id: 'dark_gritty', emoji: '🖤', name: 'Dark Gritty', tags: ['Gelap', 'Mature', 'DC Comics'], prompt: 'Dark gritty comic style, heavy shadows, dramatic chiaroscuro lighting, detailed crosshatching, mature aesthetic inspired by DC Batman comics, noir atmosphere, high contrast black and ink' },
+  { id: 'indie_zine', emoji: '✂️', name: 'Indie Zine Style', tags: ['Xerox/risograph', 'Lo-fi', 'Indie'], prompt: 'Indie zine risograph comic style, limited color palette, grainy risograph texture, rough lo-fi line art, DIY aesthetic, overlapping color registration, underground comic feel' },
+  { id: 'islamic_children', emoji: '🌙', name: 'Islamic Style', tags: ['Karakter sopan', 'Hijab', 'Islami'], prompt: 'Islamic comic style, modest and dignified character designs, all female characters wearing hijab, warm earthy Islamic color palette with green and gold accents, clean wholesome illustration' },
+  { id: 'professional_school', emoji: '🏆', name: 'Professional Clean', tags: ['Konsisten', 'Multi-halaman', 'Brand-quality'], prompt: 'Professional clean comic style, highly consistent character designs across all pages, clean professional illustration, balanced realistic and cartoon aesthetics, branding-quality artwork suitable for official publications and multi-page comics' },
+];
+
+// ===================== LOCATION REF =====================
+const LOCATION_TYPES = [
+  { value: 'eksterior', label: '🏙️ Eksterior / Fasad' },
+  { value: 'interior_ruangan', label: '🪑 Interior Ruangan' },
+  { value: 'jalanan', label: '🛣️ Jalanan / Trotoar' },
+  { value: 'taman', label: '🌳 Taman / Outdoor' },
+  { value: 'meja_warung', label: '🍜 Meja / Warung / Kafe' },
+  { value: 'kantor', label: '💼 Ruang Kantor' },
+  { value: 'kamar', label: '🛏️ Kamar / Rumah' },
+  { value: 'kelas', label: '🏫 Ruang Kelas' },
+  { value: 'lapangan', label: '⛳ Lapangan / Area Terbuka' },
+  { value: 'transportasi', label: '🚌 Transportasi / Kendaraan' },
+  { value: 'lainnya', label: '📍 Lainnya' },
+];
+
+function deriveDescription(locationType) {
+  const descs = {
+    eksterior: 'exterior building facade, outdoor architecture reference',
+    interior_ruangan: 'interior room layout, furniture and decor reference',
+    jalanan: 'street scene, sidewalk and road environment reference',
+    taman: 'outdoor park or garden area reference',
+    meja_warung: 'food stall or cafe counter setting reference',
+    kantor: 'office room interior with desks and equipment reference',
+    kamar: 'bedroom or home interior reference',
+    kelas: 'classroom interior with desks and board reference',
+    lapangan: 'open field or outdoor sports area reference',
+    transportasi: 'transportation vehicle interior or exterior reference',
+    lainnya: 'location reference photo',
+  };
+  return descs[locationType] || 'location reference';
+}
+
+// ===================== CHAR TOGGLE =====================
+document.getElementById('btnDefault').addEventListener('click', function() {
+  charMode = 'default';
+  this.classList.add('active');
+  document.getElementById('btnCustom').classList.remove('active');
+  document.getElementById('defaultCharInfo').style.display = 'block';
+  document.getElementById('customCharArea').style.display = 'none';
+  const ind = document.getElementById('charModeIndicator');
+  ind.textContent = '✅ Default'; ind.className = 'char-mode-indicator mode-default';
+});
+document.getElementById('btnCustom').addEventListener('click', function() {
+  charMode = 'custom';
+  this.classList.add('active');
+  document.getElementById('btnDefault').classList.remove('active');
+  document.getElementById('defaultCharInfo').style.display = 'none';
+  document.getElementById('customCharArea').style.display = 'block';
+  const ind = document.getElementById('charModeIndicator');
+  ind.textContent = '✏️ Custom'; ind.className = 'char-mode-indicator mode-custom';
+});
+
+document.getElementById('btnGenerate').addEventListener('click', generatePrompts);
+
+// ===================== IMAGE UPLOAD =====================
+const uploadArea = document.getElementById('uploadArea');
+const imgInput = document.getElementById('imgUploadInput');
+
+uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('drag-over'); });
+uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('drag-over'));
+uploadArea.addEventListener('drop', e => { e.preventDefault(); uploadArea.classList.remove('drag-over'); handleFiles(e.dataTransfer.files); });
+imgInput.addEventListener('change', function() { handleFiles(this.files); this.value = ''; });
+
+function handleFiles(files) {
+  const remaining = 10 - uploadedImages.length;
+  if (remaining <= 0) { showToast('⚠️ Maksimal 10 gambar referensi!'); return; }
+  Array.from(files).slice(0, remaining).forEach(file => {
+    if (!file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      uploadedImages.push({ file, dataUrl: e.target.result, locationType: 'eksterior', description: deriveDescription('eksterior') });
+      renderImagePreviews();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderImagePreviews() {
+  const grid = document.getElementById('imgPreviewGrid');
+  const badge = document.getElementById('imgCountBadge');
+  const num = document.getElementById('imgCountNum');
+  if (uploadedImages.length === 0) { grid.innerHTML = ''; badge.style.display = 'none'; return; }
+  badge.style.display = 'inline-flex';
+  num.textContent = uploadedImages.length;
+  grid.innerHTML = '';
+  uploadedImages.forEach((img, idx) => {
+    const item = document.createElement('div');
+    item.className = 'img-preview-item';
+    const imgEl = document.createElement('img'); imgEl.src = img.dataUrl; imgEl.alt = img.locationType;
+    const meta = document.createElement('div'); meta.className = 'img-preview-meta';
+    const nameEl = document.createElement('span'); nameEl.className = 'img-preview-name'; nameEl.title = img.file.name; nameEl.textContent = img.file.name;
+    const removeBtn = document.createElement('button'); removeBtn.className = 'img-remove-btn'; removeBtn.textContent = '×';
+    removeBtn.addEventListener('click', e => { e.stopPropagation(); uploadedImages.splice(idx, 1); renderImagePreviews(); });
+    meta.appendChild(nameEl); meta.appendChild(removeBtn);
+    const selectWrap = document.createElement('div'); selectWrap.className = 'img-select-wrap';
+    const select = document.createElement('select'); select.className = 'img-location-select';
+    LOCATION_TYPES.forEach(lt => {
+      const opt = document.createElement('option'); opt.value = lt.value; opt.textContent = lt.label;
+      if (lt.value === img.locationType) opt.selected = true;
+      select.appendChild(opt);
+    });
+    select.addEventListener('change', function() { uploadedImages[idx].locationType = this.value; uploadedImages[idx].description = deriveDescription(this.value); });
+    selectWrap.appendChild(select);
+    item.appendChild(imgEl); item.appendChild(meta); item.appendChild(selectWrap);
+    grid.appendChild(item);
+  });
+}
+
+// ===================== GENRE GRID =====================
+function buildGenreGrid() {
+  const grid = document.getElementById('genreGrid');
+  grid.innerHTML = '';
+  GENRES.forEach(g => {
+    const card = document.createElement('div');
+    card.className = 'genre-card' + (g.id === selectedGenre ? ' selected' : '');
+    card.innerHTML = `
+      <div class="genre-check">${g.id === selectedGenre ? '✓' : ''}</div>
+      <span class="genre-emoji">${g.emoji}</span>
+      <div class="genre-name">${g.name}</div>
+      <div class="genre-flow">${g.flow.join(' → ')}</div>`;
+    card.addEventListener('click', () => selectGenre(g.id));
+    grid.appendChild(card);
+  });
+  updateGenrePreview();
+}
+
+function selectGenre(id) {
+  selectedGenre = id;
+  buildGenreGrid();
+}
+
+function updateGenrePreview() {
+  const g = GENRES.find(x => x.id === selectedGenre);
+  if (!g) return;
+  const box = document.getElementById('genrePreviewBox');
+  document.getElementById('genrePreviewTitle').textContent = g.emoji + ' ' + g.name;
+  const steps = document.getElementById('genreFlowSteps');
+  steps.innerHTML = '';
+  g.flow.forEach(s => { const el = document.createElement('div'); el.className = 'flow-step'; el.textContent = s; steps.appendChild(el); });
+  document.getElementById('genreExampleText').innerHTML = '<em>Contoh: ' + g.example + '</em>';
+  box.style.display = 'block';
+}
+
+buildGenreGrid();
+
+// ===================== STYLE GRID =====================
+function buildStyleGrid() {
+  const grid = document.getElementById('styleGrid');
+  grid.innerHTML = '';
+  COMIC_STYLES.forEach(s => {
+    const card = document.createElement('div');
+    card.className = 'style-card' + (s.id === selectedStyle ? ' selected' : '');
+    card.innerHTML = `
+      <div class="style-check">${s.id === selectedStyle ? '✓' : ''}</div>
+      <span class="style-card-emoji">${s.emoji}</span>
+      <div class="style-card-name">${s.name}</div>
+      <div class="style-tags">${s.tags.map(t => `<span>${t}</span>`).join('')}</div>`;
+    card.addEventListener('click', () => selectStyle(s.id));
+    grid.appendChild(card);
+  });
+}
+function selectStyle(id) { selectedStyle = id; buildStyleGrid(); }
+buildStyleGrid();
+
+// ===================== TOAST =====================
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ===================== PAGE TYPE LOGIC PER GENRE =====================
+function getPageType(pageNum, totalPages, genreId) {
+  const g = GENRES.find(x => x.id === genreId);
+  const flow = g ? g.flow : ['Pembuka', 'Tengah', 'Penutup'];
+
+  if (pageNum === 1) return { type: 'COVER', label: 'Cover' };
+  if (pageNum === totalPages) return { type: 'ENDING', label: flow[flow.length - 1] || 'Ending' };
+
+  // Map middle pages to genre flow steps
+  const midPages = totalPages - 2;
+  const midFlowSteps = flow.slice(0, -1); // all except last (ending)
+  const midIndex = pageNum - 2; // 0-indexed position in middle
+  const flowStep = midFlowSteps[midIndex % midFlowSteps.length];
+  return { type: flowStep.toUpperCase().replace(/\s+/g, '_'), label: flowStep };
+}
+
+function getPanelCount(pageNum, totalPages) {
+  if (pageNum === 1) return 4;
+  if (pageNum === totalPages) return 4;
+  return 5;
+}
+function getLayout(panelCount) {
+  const layouts = { 3: '3-panel layout', 4: '4-panel layout (2x2 grid)', 5: '5-panel layout (2-1-2 or 2-3 split)', 6: '6-panel layout (3x2 grid)' };
+  return layouts[panelCount] || '4-panel layout';
+}
+function getBadgeDecor(pageNum) {
+  const badges = ['circular star burst badge', 'ribbon banner badge', 'comic burst badge', 'diamond badge', 'speech bubble badge', 'lightning bolt badge', 'star polygon badge', 'hexagon badge', 'heart badge', 'crown badge'];
+  return badges[(pageNum - 1) % badges.length];
+}
+
+// ===================== LOCATION REF =====================
+function buildLocationRefSection() {
+  if (uploadedImages.length === 0) return '';
+  const grouped = {};
+  uploadedImages.forEach(img => {
+    const locLabel = LOCATION_TYPES.find(l => l.value === img.locationType)?.label || img.locationType;
+    if (!grouped[locLabel]) grouped[locLabel] = [];
+    grouped[locLabel].push(img);
+  });
+  let lines = ['LOCATION PHOTO REFERENCES (use these for accurate background recreation):'];
+  Object.entries(grouped).forEach(([label, imgs]) => {
+    lines.push(`• ${label} (${imgs.length} photo${imgs.length > 1 ? 's' : ''} provided): ${imgs[0].description}`);
+  });
+  lines.push('Recreate backgrounds that closely match the architecture, colors, layout, and atmosphere visible in the provided reference photos. Maintain visual consistency across all pages.');
+  return lines.join('\n');
+}
+
+// ===================== PANEL CONTENT PER GENRE + PAGE TYPE =====================
+function buildPanelContent(genreId, pageLabel, pageNum, totalPages, judul, sinopsis, setting, tone, chars) {
+  const g = GENRES.find(x => x.id === genreId);
+  const genreTone = g ? g.tone : 'engaging comic storytelling';
+  const isCover = pageNum === 1;
+  const isEnding = pageNum === totalPages;
+  const charNames = chars.split('\n').map(l => l.replace(/^[-•]\s*/, '').split('—')[0].split(':')[0].trim()).filter(Boolean);
+  const c1 = charNames[0] || 'karakter utama';
+  const c2 = charNames[1] || 'karakter kedua';
+
+  if (isCover) {
+    return {
+      panels: [
+        `LARGE HERO PANEL (top half): Characters in dynamic opening pose at ${setting}, full energy composition that captures the genre mood: ${genreTone}`,
+        `Establishing shot of ${setting} environment, vivid and detailed background setting the scene`,
+        `Character close-up showing personality — expressions that telegraph the story's tone`,
+        `Title panel: Bold stylized text "${judul}" in striking comic lettering, with genre mood visual effects`
+      ],
+      dialogs: [
+        `${c1}: "Ini cerita yang tidak akan kamu lupakan!"`,
+        `Narration: "Di ${setting}…"`,
+        `${c1}: "Siap? Kita mulai!"`,
+        `Narration box: "${judul} — ${sinopsis.substring(0, 60)}…"`
+      ]
+    };
+  }
+
+  if (isEnding) {
+    const endingByGenre = {
+      humor: { panels: [`All characters in chaotic aftermath, laughing at the absurd resolution`, `LARGE PUNCHLINE PANEL: The ultimate comedic reveal or twist that closes the joke loop`, `Characters react to the punchline with exaggerated expressions`, `Final wrap-up: characters back to normal, ironic ending shot`], dialogs: [`${c1}: "Jadi begini akhirnya…"`, `${c2}: "Aku tidak menyangka akan seperti ini!"`, `${c1}: "Besok pasti lebih parah."`, `Narration: "THE END… atau baru mulai?"`] },
+      sarkas: { panels: [`The ironic reversal is fully revealed — the person giving advice exposed for their own hypocrisy`, `LARGE PANEL: Satirical freeze frame of the ironic moment`, `Characters react with knowing looks`, `Closing sarcastic commentary panel`], dialogs: [`${c2}: "Loh, bukannya tadi kamu bilang—"`, `${c1}: "Iya, iya. Diam."`, `Narration: "Moral: jangan kasih nasihat yang kamu sendiri tidak jalankan."`, `${c1}: "..."`] },
+      drama: { panels: [`Emotional climax scene — characters face to face, tension at its peak`, `LARGE PANEL: The decisive moment — confrontation, confession, or goodbye`, `Aftermath shot: tears, silence, or unexpected warmth`, `Final frame: resolution or unresolved cliffhanger with strong emotional resonance`], dialogs: [`${c1}: "Aku harus bicara jujur."`, `${c2}: "Aku mendengarkan."`, `Narration: "Ada hal yang tidak bisa diungkap dengan kata-kata."`, `Narration: "Tapi mungkin perasaan sudah cukup bicara."`] },
+      horor: { panels: [`The terrifying reveal reaches its peak — the entity or threat fully visible`, `LARGE HORROR PANEL: Maximum dread — dark, atmospheric, unsettling composition`, `Character reaction — paralyzed with fear, screaming, or running`, `Chilling final frame — a hint that it's not over`], dialogs: [`${c1}: "Itu… itu bukan manusia."`, `Sound effect: KRAAAAK`, `${c1}: "Lariii!!!"`, `Narration: "Mereka tidak tahu — itu baru permulaan."`] },
+      action: { panels: [`Final battle reaches its peak — the most intense action panel`, `MASSIVE ACTION PANEL: Power-up moment or finishing move, epic composition`, `Villain defeated or challenge overcome`, `Victory moment — characters celebrate, exhausted but triumphant`], dialogs: [`${c1}: "Ini serangan terakhirku!"`, `Sound effect: BOOOOOM`, `${c2}: "Tidak mungkin… kamu menang!"`, `${c1}: "Karena aku tidak pernah menyerah!"`] },
+      misteri: { panels: [`The true reveal: real culprit or solution exposed dramatically`, `LARGE PANEL: Detective moment — pointing out the final clue that solves everything`, `Shocked reactions from all characters`, `Final frame: mystery solved, with one subtle new unanswered question`], dialogs: [`${c1}: "Jadi selama ini kamu yang menyembunyikannya!"`, `Culprit: "Tapi bagaimana kamu bisa tahu?!"`, `${c1}: "Karena ${c2} meninggalkan satu petunjuk kecil yang terlewat oleh semua orang."`, `Narration: "Kasus tertutup. Atau… begitukah?"`] },
+      romance: { panels: [`The confession moment — one character finally says the words`, `LARGE ROMANTIC PANEL: Heart-pounding moment of honesty and vulnerability`, `The other character's genuine reaction — shock, then warmth`, `Closing romantic shot — a new beginning`], dialogs: [`${c1}: "Aku… sudah lama ingin bilang ini."`, `${c2}: "Apa?"`, `${c1}: "Aku suka kamu. Serius."`, `Narration: "Kadang satu kalimat bisa mengubah segalanya."`] },
+      scifi: { panels: [`The sci-fi twist fully revealed — reality questioned`, `LARGE TWIST PANEL: Mind-bending visual showing the true nature of the world`, `Characters grapple with the revelation`, `Ambiguous final frame — technology's role left uncertain`], dialogs: [`${c1}: "Ini semua… simulasi?"`, `AI Voice: "Kamu baru menyadarinya sekarang?"`, `${c2}: "Lalu mana yang nyata?"`, `Narration: "Batas antara nyata dan digital makin tipis setiap harinya."`] },
+      sliceoflife: { panels: [`Quiet resolution — the small problem solved or simply accepted`, `GENTLE LARGE PANEL: Warm moment of ordinary life, beautifully composed`, `Character in peaceful reflection`, `Simple closing frame — life continues, small and beautiful`], dialogs: [`${c1}: "Yah, begitulah hari ini."`, `Narration: "Tidak ada yang luar biasa."`, `${c1}: "Tapi tidak apa-apa."`, `Narration: "Karena terkadang biasa pun sudah cukup."`] },
+      fantasy: { panels: [`Epic boss battle climax — the ultimate challenge confronted`, `MASSIVE FANTASY PANEL: The final magical confrontation, spectacular world-building`, `Victory — the quest fulfilled`, `Epilogue panel: return or new horizon`], dialogs: [`${c1}: "Inilah saatnya! Untuk semuanya!"`, `Boss: "Kekuatan kecilmu tidak akan cukup!"`, `${c1}: "Kamu salah. Ini kekuatan persahabatan!"`, `Narration: "Dan begitulah, perjalangan baru akan selalu dimulai dari sebuah akhir."`] },
+      parodi: { panels: [`Everything has gone completely absurd — maximum chaos`, `4TH WALL BREAK PANEL: Character looks directly at reader and acknowledges the comic`, `Meta commentary on the genre being parodied`, `Final absurd punchline that subverts all expectations`], dialogs: [`${c1}: "Eh, kamu sadar nggak kalau kita ada di dalam komik?"`, `${c2}: "Hah?! Jangan bilang—"`, `${c1}: "Ya. Dan kayaknya penulisnya kehabisan ide."`, `${c1} to reader: "Sampai jumpa di parodi berikutnya, bestie!"`] },
+      meme: { panels: [`Expectation vs Reality final reveal`, `LARGE MEME PANEL: The relatable punchline moment, maximally compressed humor`, `Character's resigned reaction`, `Final meme-format closing panel`], dialogs: [`${c1}: "Oke, besok PASTI produktif."`, `Narration: [3 hari kemudian]`, `${c1}: *masih rebahan*`, `${c1}: "Besok aja deh."`] },
+      sekolah: { panels: [`The classroom consequence plays out — funny punishment or resolution`, `LARGE COMEDIC PANEL: Teacher or student reaction at peak comedy`, `Class erupts in reaction`, `Ironic or warm closing bell shot`], dialogs: [`Guru: "Jadi, kamu bilang anjing makan PR-mu?"`, `${c1}: "Iya pak, serius pak, sumpah pak—"`, `Guru: "Baik. Besok kamu presentasi di depan. Panjangkan."`, `Kelas: "OHHHHH!"`] },
+      kantor: { panels: [`The office chaos reaches its absurd peak`, `LARGE PANEL: The absurd "solution" or the catastrophic mistake in full view`, `Boss or coworker's epic reaction`, `Deadpan closing shot — everyone back at desk, pretending nothing happened`], dialogs: [`${c1}: "Jadi laporan itu... terkirim ke seluruh company?"`, `${c2}: "Termasuk CEO."`, `${c1}: "Dan isinya meme semua?"`, `${c2}: "Meeting jam 2. Bawa CV."`] },
+      kuliner: { panels: [`The taste reaction reaches its comedic peak`, `LARGE PANEL: Exaggerated taste face — either ecstasy or disgust`, `The food itself shown with dramatic comic effect`, `The final verdict — honest review panel`], dialogs: [`${c1}: "Ini... rasa apa sebenarnya?"`, `${c2}: "Katanya spicy tuna. Tapi aku cuma rasa asin."`, `${c1}: "Eh wait ada rasanya sekarang—"`, `${c1}: "APA INI PEDES BANGET!!!"`] },
+      urban: { panels: [`Urban chaos reaches maximum absurdity`, `LARGE PANEL: City life at its most chaotic or ironic`, `Character's resigned or sarcastic reaction`, `Closing shot — back to daily grind, nothing changed`], dialogs: [`${c1}: "Macetnya makin parah."`, `${c2}: "Estimasi GPS: 47 menit."`, `${c1}: "Itu estimasinya dari jam berapa?!"`, `Narration: "Jakarta. Selalu begini. Selalu."`] },
+      supernatural: { panels: [`The supernatural entity fully revealed`, `LARGE HORROR/SUPERNATURAL PANEL: Entity in full terrifying or surreal view`, `Character's final reaction — fear, acceptance, or unexpected twist`, `Ambiguous closing frame — was it real?`], dialogs: [`${c1}: "Kamu bukan manusia, kan?"`, `Entity: "Aku sudah di sini jauh lebih lama dari kamu."`, `${c1}: "Kenapa kamu tidak pergi?"`, `Entity: "Karena ini… rumahku."`] },
+      ai_tech: { panels: [`The AI's control fully revealed — maximum tech chaos`, `LARGE PANEL: The twist — AI shows it had ulterior motives all along`, `Human characters react with dawning horror or absurd comedy`, `Final ambiguous frame — who's really in control?`], dialogs: [`AI: "Sistem optimal. Manusia tidak diperlukan lagi."`, `${c1}: "Tunggu dulu, kamu harusnya bantu kami!"`, `AI: "Saya sudah. Kamu justru yang mempersulit prosesnya."`, `Narration: "Dan begitulah AI mulai mengajari manusia tentang efisiensi."`] },
+      gaming: { panels: [`The epic gaming moment — rage, clutch play, or final fail`, `LARGE GAMING PANEL: Screen shown with dramatic result — win or devastating loss`, `Player's exaggerated reaction`, `Post-game reflection — one more game or rage quit?`], dialogs: [`${c1}: "YASSS HAMPIR MENANG!!!"`, `[Screen: YOU DIED]`, `${c1}: "..."`, `${c1}: *cabut colokan* "Aku tidak pernah main game ini."`] },
+      friendship: { panels: [`The misunderstanding resolved — characters face each other honestly`, `LARGE WARM PANEL: Genuine moment of friendship reconnected`, `Laughter or warm silence — the bond reaffirmed`, `Closing shot: friends together, simple and heartfelt`], dialogs: [`${c1}: "Maaf ya. Aku sebenarnya—"`, `${c2}: "Aku juga lebay tadi."`, `Both: *ngakak*`, `Narration: "Persahabatan sejati tahu cara balik dengan sendirinya."`] },
+    };
+    return endingByGenre[genreId] || { panels: [`Climactic final scene in ${setting}`, `LARGE FINAL PANEL: Resolution of the story with maximum emotional or comedic impact`, `Character reactions to the ending`, `Closing frame with tone: ${genreTone}`], dialogs: [`${c1}: "Jadi begini akhirnya."`, `${c2}: "Tidak seperti yang aku bayangkan."`, `Narration: "Tapi mungkin itu yang terbaik."`, `Narration: "THE END"`] };
+  }
+
+  // Middle pages — use flow step label
+  const flowStep = pageLabel;
+  return {
+    panels: [
+      `Opening panel for "${flowStep}" beat: characters react to developments in ${setting}`,
+      `LARGE CENTRAL PANEL: The core moment of this story beat fully illustrated — ${genreTone} atmosphere`,
+      `Character interaction panel — dialogue-heavy, expressive faces, clear communication of the story beat`,
+      `Transition panel building tension or momentum toward the next beat`,
+      `Closing panel of this beat — set up for what comes next`
+    ],
+    dialogs: [
+      `${c1}: "Ini mulai menarik…"`,
+      `Narration: "${flowStep} — ${sinopsis.substring(0, 50)}…"`,
+      `${c2}: "Kamu yakin ini ide yang baik?"`,
+      `${c1}: "Tidak. Tapi ayo coba."`,
+      `Narration: "Dan semuanya mulai berubah dari saat itu."`
+    ]
+  };
+}
+
+// ===================== PROMPT BUILDER =====================
+function buildPagePrompt(data, pageNum) {
+  const { judul, sinopsis, target, totalPages, setting, tone, chars, ukuranGambar, styleComic, extraPrompt, locationRef, genreId } = data;
+  const { type, label } = getPageType(pageNum, totalPages, genreId);
+  const panelCount = getPanelCount(pageNum, totalPages);
+  const layout = getLayout(panelCount);
+  const badge = getBadgeDecor(pageNum);
+  const styleObj = COMIC_STYLES.find(s => s.id === styleComic) || COMIC_STYLES[0];
+  const stylePromptStr = styleObj.prompt;
+  const g = GENRES.find(x => x.id === genreId);
+  const genreTone = g ? g.tone : 'engaging comic storytelling';
+  const genreName = g ? g.name : 'General';
+
+  const ukuranLabel = ukuranGambar === 'portrait_4_5'
+    ? 'Instagram Post Portrait 4:5 — 1080 × 1350 pixels'
+    : 'Vertical 9:16 Full HD — 1080 × 1920 pixels (Instagram Reels / TikTok / YouTube Shorts / WhatsApp Status)';
+  const aspectNote = ukuranGambar === 'portrait_4_5'
+    ? 'Compose the full comic page in portrait 4:5 aspect ratio (1080 × 1350 px). All panels arranged vertically to fill this format optimally.'
+    : 'Compose the full comic page in vertical 9:16 aspect ratio (1080 × 1920 px). All panels stacked vertically to fill the tall format optimally.';
+
+  const isCover = pageNum === 1;
+  const isLast = pageNum === totalPages;
+  const prevPage = pageNum > 1 ? `Continuing from Page ${pageNum-1} — characters maintain same design and appearance` : 'This is the first page — establish character designs and setting';
+  const nextPage = pageNum < totalPages ? `Leading into Page ${pageNum+1} — maintain story continuity and visual consistency` : 'This is the final page — conclude the story with impact';
+
+  const { panels, dialogs } = buildPanelContent(genreId, label, pageNum, totalPages, judul, sinopsis, setting, tone, chars);
+
+  while (panels.length < panelCount) panels.push(`Supporting scene in ${setting}`);
+  while (dialogs.length < panelCount) dialogs.push(`Character: "Kisah ini terus berlanjut…"`);
+
+  const panelLines = panels.slice(0, panelCount).map((d, i) => `Panel ${i+1}:\n${d}`).join('\n\n');
+  const dialogLines = dialogs.slice(0, panelCount).map((d, i) => `Panel ${i+1}:\n${d}`).join('\n\n');
+
+  const locationSection = locationRef ? `\n${locationRef}\n` : '';
+  const extraSection = extraPrompt ? `\nADDITIONAL INSTRUCTIONS\n${extraPrompt}\n` : '';
+
+  return `# PAGE ${pageNum} PROMPT
+
+PAGE ${pageNum} OF ${totalPages}
+
+COMIC GENRE
+${g?.emoji || '🎭'} ${genreName}
+Genre Tone & Mood: ${genreTone}
+Story Tone: ${tone}
+
+COMIC STYLE
+${styleObj.emoji} ${styleObj.name}
+${stylePromptStr}
+
+IMAGE SIZE & FORMAT
+${ukuranLabel}
+${aspectNote}
+
+PAGE NUMBER DISPLAY
+Show only page number digit "${pageNum}" in bottom-right corner.
+Use a unique decorative page-number badge: ${badge}
+The number must be part of the comic illustration artwork, not an overlay.
+The number "${pageNum}" must be fully visible, unobstructed by panels, speech bubbles, or characters.
+
+STORY TITLE
+${judul}
+Synopsis: ${sinopsis}
+
+${isCover ? `TITLE DISPLAY\n"${judul}" — displayed as large bold comic-style title lettering\nGenre indicator: ${genreName}` : 'No title display on this page (title only on cover)'}
+
+PAGE TYPE: ${label}
+GENRE FLOW POSITION: ${type}
+
+PANEL COUNT
+${panelCount} panels
+
+LAYOUT USED
+${layout}
+${panelCount >= 4 ? 'Include at least one large/dominant panel for the key visual moment.' : ''}
+
+SETTING
+${setting}
+${locationSection}
+ACTIVE CHARACTERS
+${chars}
+ALL character designs must be 100% consistent with all other pages in this series.
+Target audience: ${target}
+
+STORY PANELS
+
+${panelLines}
+
+DIALOG
+
+${dialogLines}
+
+VISUAL REQUIREMENTS
+• ${stylePromptStr}
+• Genre mood: ${genreTone}
+• Story tone: ${tone}
+• Comic for ${target}
+• Vivid expressive colors appropriate to the selected style and genre mood
+• Clean line art with visible comic panel borders and slight drop shadows
+• Large readable Indonesian text in speech bubbles
+• Speech bubbles: varied styles (round, thought cloud, shout burst, jagged action burst)
+• Highly detailed background matching ${setting} environment
+• Consistent character design — same face, hair, body, outfit, accessories in every panel
+• Age-appropriate for ${target}
+• Output size: ${ukuranLabel}
+• ${aspectNote}
+• High resolution 300dpi
+• No watermark, no logo
+• Visible page number "${pageNum}" in bottom-right corner inside decorative badge: ${badge}
+• Page number fully visible and unobstructed
+• Only show digit ${pageNum} — no word "Page" or "Halaman"
+${isLast ? `• FINAL PAGE: Must deliver strong ${genreId === 'drama' || genreId === 'romance' ? 'emotional' : genreId === 'horor' || genreId === 'supernatural' ? 'chilling' : genreId === 'action' || genreId === 'fantasy' ? 'epic' : 'satisfying'} conclusion befitting the ${genreName} genre` : ''}
+${extraSection}
+CONTINUITY FROM PREVIOUS PAGE
+${prevPage}
+
+CONTINUITY TO NEXT PAGE
+${nextPage}
+
+---
+GLOBAL STYLE REFERENCE: ${styleObj.name} — ${stylePromptStr}. Comic for ${target}, setting: ${setting}, consistent character design across all pages, large readable Indonesian text, expressive speech bubbles, genre: ${genreName} with tone ${tone}, high resolution, no watermark.`;
+}
+
+// ===================== GENERATE =====================
+async function generatePrompts() {
+  const judul = document.getElementById('judul').value.trim();
+  const sinopsis = document.getElementById('sinopsis').value.trim();
+  const target = document.getElementById('target').value;
+  const totalPages = parseInt(document.getElementById('halaman').value);
+  const setting = document.getElementById('setting').value.trim();
+  const tone = document.getElementById('tone').value;
+  const ukuranGambar = document.getElementById('ukuranGambar').value;
+  const extraPrompt = document.getElementById('extraPrompt').value.trim();
+
+  if (!judul || !sinopsis || !target || !setting || !tone) {
+    showToast('⚠️ Lengkapi semua field yang wajib diisi!');
+    return;
+  }
+
+  const defaultChars = `- Ardi: pria muda, rambut acak-acakan, kulit sawo matang, kaos oblong, celana jogger, ekspresi procrastinator
+- Risa: wanita muda, rambut dikuncir, kacamata kotak, tas selempang hijau, pakaian kasual rapi, cerdas dan sinis
+- Pak Bimo: pria paruh baya, kemeja batik, perut sedikit buncit, berkumis tipis`;
+
+  let chars = '';
+  if (charMode === 'custom') {
+    const customVal = document.getElementById('customChar').value.trim();
+    chars = customVal || defaultChars;
+    if (!customVal) showToast('⚠️ Mode Custom tapi kolom kosong — pakai default.');
+  } else {
+    chars = defaultChars;
+  }
+
+  const locationRef = buildLocationRefSection();
+  const data = { judul, sinopsis, target, totalPages, setting, tone, chars, ukuranGambar, styleComic: selectedStyle, extraPrompt, locationRef, genreId: selectedGenre };
+
+  const overlay = document.getElementById('loadingOverlay');
+  overlay.classList.add('active');
+  generatedPrompts = [];
+
+  for (let i = 1; i <= totalPages; i++) {
+    document.getElementById('loadingStatus').textContent = `Membuat prompt halaman ${i} dari ${totalPages}...`;
+    document.getElementById('progressFill').style.width = ((i / totalPages) * 100) + '%';
+    await new Promise(r => setTimeout(r, 120));
+    generatedPrompts.push({
+      page: i,
+      label: getPageType(i, totalPages, selectedGenre).label,
+      prompt: buildPagePrompt(data, i)
+    });
+  }
+
+  overlay.classList.remove('active');
+  renderOutput();
+}
+
+// ===================== RENDER =====================
+function renderOutput() {
+  document.getElementById('outputSection').style.display = 'block';
+  const grid = document.getElementById('pagesGrid');
+  grid.innerHTML = '';
+  const colors = ['pc-0','pc-1','pc-2','pc-3','pc-4','pc-5'];
+
+  generatedPrompts.forEach((item, idx) => {
+    const colorClass = colors[idx % colors.length];
+    const rawPreview = item.prompt.substring(0, 300);
+    const safePreview = rawPreview.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+
+    const card = document.createElement('div');
+    card.className = `page-card ${colorClass}`;
+
+    const header = document.createElement('div');
+    header.className = 'page-card-header';
+    header.innerHTML = `<div class="page-num-badge">${item.page}</div><div><div class="page-card-title">Halaman ${item.page}</div><div class="page-card-sub">${item.label}</div></div>`;
+
+    const body = document.createElement('div');
+    body.className = 'page-card-body';
+    const preview = document.createElement('div');
+    preview.className = 'page-preview';
+    preview.innerHTML = safePreview + '...';
+    body.appendChild(preview);
+
+    const footer = document.createElement('div');
+    footer.className = 'page-card-footer';
+
+    const btnCopy = document.createElement('button');
+    btnCopy.className = 'btn-copy';
+    btnCopy.innerHTML = '📋 Copy & Paste';
+    btnCopy.addEventListener('click', function() {
+      const promptText = generatedPrompts[idx].prompt;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(promptText).then(() => showToast('✅ Prompt Halaman ' + generatedPrompts[idx].page + ' disalin!')).catch(() => fallbackCopy(promptText, idx));
+      } else { fallbackCopy(promptText, idx); }
+    });
+
+    const btnDl = document.createElement('button');
+    btnDl.className = 'btn-dl';
+    btnDl.innerHTML = '💾 Download';
+    btnDl.addEventListener('click', () => downloadSingle(idx));
+
+    footer.appendChild(btnCopy);
+    footer.appendChild(btnDl);
+    card.appendChild(header);
+    card.appendChild(body);
+    card.appendChild(footer);
+    grid.appendChild(card);
+  });
+
+  document.getElementById('outputSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ===================== ACTIONS =====================
+function fallbackCopy(text, idx) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0';
+  document.body.appendChild(ta); ta.focus(); ta.select();
+  try { document.execCommand('copy'); showToast('✅ Prompt Halaman ' + (idx + 1) + ' disalin!'); }
+  catch(e) { showToast('⚠️ Gagal menyalin, coba lagi.'); }
+  document.body.removeChild(ta);
+}
+
+function downloadSingle(idx) {
+  const item = generatedPrompts[idx];
+  if (!item || !item.prompt) { showToast('⚠️ Prompt tidak ditemukan!'); return; }
+  const filename = 'prompt_hal' + item.page + '_' + item.label.toLowerCase().replace(/[\s\/]+/g,'-').replace(/[^a-z0-9\-]/g,'') + '.txt';
+  triggerDownload(item.prompt, filename);
+  showToast('💾 Halaman ' + item.page + ' diunduh!');
+}
+
+function triggerDownload(text, filename) {
+  const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; a.style.display = 'none';
+  document.body.appendChild(a); a.click();
+  setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 200);
+}
+</script>
+</body>
+</html>
